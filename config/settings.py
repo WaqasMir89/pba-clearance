@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "apps.identity",
     "apps.audit",
+    "apps.registry",
 ]
 MIDDLEWARE = [
     "apps.common.middleware.RequestIdMiddleware",
@@ -79,6 +80,7 @@ SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_AGE = 8 * 60 * 60
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
+CSRF_FAILURE_VIEW = "apps.common.views.csrf_failure"
 CSRF_TRUSTED_ORIGINS = [
     value.strip()
     for value in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")

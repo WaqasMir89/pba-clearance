@@ -28,4 +28,16 @@ Passed locally on Python 3.13.14, Django 5.2.18 and PostgreSQL 18.6:
 
 The sandbox forbids host-created listening sockets; a dedicated Compose PostgreSQL container was used instead. The abandoned temporary host cluster contains no application data. Fresh-volume initialization creates the nonprivileged application owner. No production restore or provider verification has been performed. Remote CI status is recorded after pushing the executable step.
 
-S02–S12 are not complete.
+S01 remote CI [41032860537](https://github.com/WaqasMir89/pba-clearance/actions/runs/41032860537) passed on exact commit `bef89ae216fbf32dc74c93ebf8483285c2e60de5`.
+
+## S02 — Identity and scoped registry
+
+Implemented CSRF-protected session login/logout, current-membership discovery, time-bounded/revocable memberships, role/type validation, explicit organization selection, scoped list/detail reads and PBA registry commands. A staff/superuser flag grants no business access. Denials are audited after command rollback. Client visibility grants are explicitly distinct from agency appointments. Added fictional-data provisioning with operator-selected credentials, no password resets and no reactivation of revoked access.
+
+Passed on the same PostgreSQL environment:
+
+- **39 tests**, covering CSRF including token rotation, logout, wrong credentials, local rate limiting, foreign IDs, forged/expired/future/revoked memberships, inactive accounts/organizations, malformed role assignments, read-only auditors, nonprivileged superusers, database interval constraints, transactional command failure and idempotent demo provisioning.
+- Warning-free, validated OpenAPI generation; CI now requires it.
+- Migration apply/drift, Django system check and Ruff lint/format passed.
+
+Registry writes and demo provisioning are disabled outside development. MFA, production account recovery/delegation administration, shared rate limiting and production authority acceptance remain open. No public admin or membership-management bypass is exposed. S03–S12 are not complete.

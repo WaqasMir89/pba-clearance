@@ -17,3 +17,17 @@ def ready(request):
     except DatabaseError:
         return JsonResponse({"status": "unavailable"}, status=503)
     return JsonResponse({"status": "ready"})
+
+
+def csrf_failure(request, reason=""):
+    return JsonResponse(
+        {
+            "error": {
+                "code": "csrf_failed",
+                "message": "Refresh the page and try again.",
+                "fields": {},
+            },
+            "request_id": getattr(request, "request_id", None),
+        },
+        status=403,
+    )

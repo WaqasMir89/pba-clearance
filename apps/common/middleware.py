@@ -1,5 +1,7 @@
 from uuid import UUID, uuid4
 
+from django.utils.cache import patch_vary_headers
+
 
 class RequestIdMiddleware:
     def __init__(self, get_response):
@@ -23,5 +25,5 @@ class PrivateResponseMiddleware:
         response = self.get_response(request)
         if request.path.startswith("/api/"):
             response["Cache-Control"] = "no-store, private"
-            response["Vary"] = "Cookie, X-Organization-ID"
+            patch_vary_headers(response, ["Cookie", "X-Organization-ID"])
         return response

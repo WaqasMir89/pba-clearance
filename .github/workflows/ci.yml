@@ -43,4 +43,5 @@ jobs:
       - run: uv run python manage.py check
       - run: uv run python manage.py makemigrations --check --dry-run
       - run: uv run python manage.py migrate --noinput
+      - run: uv run python manage.py spectacular --validate --fail-on-warn --file /tmp/openapi.yml
       - run: uv run pytest

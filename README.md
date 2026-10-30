@@ -33,6 +33,12 @@ uv run pytest
 
 Liveness: `/health/live/`. Database readiness: `/health/ready/`. API schema: `/api/v1/schema/` (authenticated). Business responses are private and noncacheable. The foundation records outbox intents but does not dispatch email or any other external effect.
 
+Provision fictional local records with `uv run python manage.py seed_demo`. In an interactive terminal it prompts for a password; automation can supply `CLEARANCE_DEMO_PASSWORD`. There is no preset password. Demo users are `demo.pba` (registry officer), `demo.channel` (two channel workspaces), `demo.agency` (two agency workspaces) and `demo.reviewer` (read-only PBA auditor). Re-running preserves passwords, revocations and existing records. Demo provisioning is disabled outside development.
+
+Authentication flow: `GET /api/v1/auth/csrf/`, then JSON `POST /api/v1/auth/login/` with `X-CSRFToken`; use `/auth/session/` for current memberships. Login rotates the CSRF token. Refresh it before subsequent JSON commands. Workspace requests require `X-Organization-ID` for a live membership. JSON `POST /auth/logout/` also requires CSRF. Only an explicitly authorized PBA registry officer can create organization/client entries, and writes are currently disabled outside development. Client visibility grants do not establish approved agency appointments or business eligibility.
+
+MFA, shared-process rate limiting, recovery/delegation administration and production identity acceptance are still open gates. The current local login throttle uses Django's process-local cache. No Django admin bypass is exposed.
+
 Stop the local database with `docker compose stop db`; keep the volume to preserve development records. For production, the missing release gates in the build plan still apply.
 
 ## Publication boundaries
