@@ -12,7 +12,28 @@ The first delivery establishes the application, organization isolation, audit ev
 
 ## Development
 
-Setup instructions are added alongside the executable foundation. The selected stack is Python 3.13, Django 5.2 LTS, Django REST Framework, PostgreSQL 18 and React/TypeScript. Dependencies will be locked and CI will run against PostgreSQL.
+Requires Python 3.13, uv, Docker/Compose and, for the later frontend, Node 22+. The foundation uses Django 5.2 LTS, DRF and PostgreSQL 18; exact dependencies are in `uv.lock`.
+
+```sh
+cp .env.example .env
+docker compose up -d db
+uv sync --locked
+uv run python manage.py migrate
+uv run python manage.py runserver 127.0.0.1:8046
+```
+
+The dedicated development database listens on loopback port 55463. On first initialization, Compose creates a `clearance_app` database owner without superuser or BYPASSRLS privileges. `CREATEDB` is for test database creation only; production uses separate migration/runtime roles. Choose unique secrets before any shared environment. Do not reuse a pre-existing PostgreSQL volume from another product.
+
+```sh
+uv run ruff check .
+uv run ruff format --check .
+uv run python manage.py makemigrations --check --dry-run
+uv run pytest
+```
+
+Liveness: `/health/live/`. Database readiness: `/health/ready/`. API schema: `/api/v1/schema/` (authenticated). Business responses are private and noncacheable. The foundation records outbox intents but does not dispatch email or any other external effect.
+
+Stop the local database with `docker compose stop db`; keep the volume to preserve development records. For production, the missing release gates in the build plan still apply.
 
 ## Publication boundaries
 
