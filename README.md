@@ -8,11 +8,11 @@ See [BUILD_PLAN.md](BUILD_PLAN.md) for the sequence, [discovery register](docs/d
 
 ## Current scope
 
-The delivery includes named sessions, scoped organization/client registers, audit history, candidate policy/calendar snapshots and a connected React workspace. Sandbox complaint intake now supports strict CSV staging, row feedback, duplicate detection, approver filing and immutable receipts through the API; its browser workflow is being connected next. Agencies can read only their own filed reported claims. All seeded examples are fictional. Production filing, enforcement and outbound communications remain disabled.
+The delivery includes named sessions, scoped organization/client registers, audit history, candidate policy/calendar snapshots and a connected React workspace. Sandbox complaint intake supports CSV upload/review, duplicate detection, approver filing, recoverable commands and verified receipt downloads. Agencies can read only their own filed reported claims. All seeded examples are fictional. Production filing, enforcement and outbound communications remain disabled.
 
 ## Development
 
-Requires Python 3.13, uv, Docker/Compose and, for the later frontend, Node 22+. The foundation uses Django 5.2 LTS, DRF and PostgreSQL 18; exact dependencies are in `uv.lock`.
+Requires Python 3.13, uv, Docker/Compose and Node 22.12+. The foundation uses Django 5.2 LTS, DRF and PostgreSQL 18; exact dependencies are in `uv.lock`.
 
 ```sh
 cp .env.example .env
@@ -48,6 +48,8 @@ Open http://127.0.0.1:5196. Vite proxies the same-origin API to Django on 8046; 
 The candidate source text is in `examples/candidate-policy.txt`; its SHA-256 is reproducible. Explicit dates/times in demo data are fictional examples, not an implementation of the supplied workflow's disputed dates. Policy version and sealed calendar history are protected against application UPDATE/DELETE; milestones cannot be appended after sealing. There is no production policy approval endpoint.
 
 The [intake contract](docs/plans/complaint-intake.md) describes CSV fields, limits, exact decimal amounts, review outcomes and response-loss recovery. Sandbox filing requires an explicit simulation timestamp inside the selected candidate window; it also records the real server time. A filed reported amount is an unverified channel assertion, not a settlement or an established outstanding balance. Corrections use new imports; sealed history cannot be edited or extended. Production policy, evidence storage and MFA remain release gates.
+
+Follow the [fictional CSV walkthrough](examples/intake/README.md) to exercise mixed-row review, corrected upload and separate agency visibility. The browser saves pending command metadata in session storage, checks protected records after a lost response and retains the original UUID/payload for an explicit retry. Source file bytes stay in memory; after reloading an unresolved upload, reselect the unchanged CSV. Closing the tab may remove this local recovery metadata; server records and idempotency remain authoritative.
 
 Authentication flow: `GET /api/v1/auth/csrf/`, then JSON `POST /api/v1/auth/login/` with `X-CSRFToken`; use `/auth/session/` for current memberships. Login rotates the CSRF token. Refresh it before subsequent JSON commands. Workspace requests require `X-Organization-ID` for a live membership. JSON `POST /auth/logout/` also requires CSRF. Only an explicitly authorized PBA registry officer can create organization/client entries, and writes are currently disabled outside development. Client visibility grants do not establish approved agency appointments or business eligibility.
 

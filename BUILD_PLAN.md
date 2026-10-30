@@ -2,7 +2,7 @@
 
 Prepared 30 October 2026. Implementation is authorized; delivery proceeds through verified commits on `main`. The original supplied engineering plan remains the overall scope reference. This document translates it into executable delivery steps without publishing private discovery/commercial files.
 
-Current delivery: S00–S03 implemented with local verification; S04 sandbox intake API implemented with browser work in progress. See `docs/progress.md` and per-commit GitHub Actions for evidence. The rest of S04 and S05–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
+Current delivery: S00–S03 and S04 sandbox intake/API/browser implemented with verification. See `docs/progress.md` and per-commit GitHub Actions for evidence. S04 production rule/evidence/identity acceptance and S05–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
 
 ## Evidence and decisions
 

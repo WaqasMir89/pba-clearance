@@ -2,16 +2,19 @@ export class ApiError extends Error {
   status: number;
   fields: unknown;
   requestId?: string;
+  code?: string;
   constructor(
     status: number,
     message: string,
     fields: unknown = {},
     requestId?: string,
+    code?: string,
   ) {
     super(message);
     this.status = status;
     this.fields = fields;
     this.requestId = requestId;
+    this.code = code;
   }
 }
 
@@ -21,6 +24,7 @@ export async function api<T>(
     organizationId?: string;
     signal?: AbortSignal;
     body?: unknown;
+    responseType?: "text";
   } = {},
 ): Promise<T> {
   const headers: Record<string, string> = { Accept: "application/json" };
@@ -39,6 +43,8 @@ export async function api<T>(
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   });
   if (response.status === 204) return undefined as T;
+  if (response.ok && options.responseType === "text")
+    return (await response.text()) as T;
   const json = await response.json().catch(() => null);
   if (!response.ok) {
     if (response.status === 401 && !path.startsWith("/auth/")) {
@@ -49,6 +55,7 @@ export async function api<T>(
       json?.error?.message || "The request could not be completed.",
       json?.error?.fields,
       json?.request_id,
+      json?.error?.code,
     );
   }
   if (json === null)

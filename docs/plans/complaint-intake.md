@@ -1,6 +1,6 @@
 # S04: Sandbox complaint intake and immutable filing receipts
 
-Status: implementation authorized; prepared 30 October 2026. This adds the next usable slice after commit `760b34e`. It does not approve policy or enable production filing.
+Status: sandbox API and connected browser implemented; prepared 30 October 2026. See `docs/progress.md` for executed verification. This adds the next usable slice after commit `760b34e`. It does not approve policy or enable production filing.
 
 ## Evidence and scope
 

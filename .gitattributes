@@ -1,0 +1,2 @@
+# Keep fictional CSV example bytes reproducible across development platforms.
+examples/intake/*.csv text eol=crlf

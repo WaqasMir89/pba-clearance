@@ -78,3 +78,24 @@ Executed verification on PostgreSQL 18.6 using the non-superuser/non-BYPASSRLS a
 - Existing TypeScript/production browser build passed. The new intake browser workflow is the next commit; no browser acceptance is claimed here.
 
 The first full run encountered a stopped development database; restarting the existing dedicated Compose service restored verification without resetting its volume. The final suite above passed. Demo provisioning now adds a separate `demo.approver` while preserving existing passwords and revocations. Production filing, MFA, approved policy/period rules, original-document storage and retention remain open gates. XLSX and amendments to filed claims are later slices.
+
+S04a remote CI [41069135716](https://github.com/WaqasMir89/pba-clearance/actions/runs/41069135716) passed both jobs on exact commit `b7f947bc5ef1b51c29e0e741fc70dac4890641db`.
+
+## S04b — Connected intake and reported-claim workspace
+
+Implemented CSV selection/template download, scoped code lookup, paginated import history, current/archived row reviews, outcome filters, approver declaration and explicit PKT simulation time. Added exact decimal-string formatting, receipt verification/download and scoped reported-claim search/detail/totals. Added three fictional CSV examples and a repeatable walkthrough. Shared dialog/table/form primitives now live outside the main application component.
+
+Pending commands are saved before a mutation. Recovery checks protected server records; retries preserve the original UUID, preview digest, declaration and simulation time. Upload recovery stores metadata rather than CSV bytes. A confirmed receipt clears pending state even when the POST response was lost before a reload. Workspace/user boundaries clear rendered data; a reference-selector change does not retarget an existing import.
+
+Executed local Chromium verification against PostgreSQL and the built browser bundle:
+
+- Preparer staged the mixed North example: two ready rows, one invalid row, PKR 3,540.00 ready. Filing was absent from the preparer role. The approver's closing-boundary attempt was rejected; a valid simulation produced one receipt with two claims and one explicitly excluded source row.
+- Corrected upload preserved two duplicates and filed only the third invoice, PKR 1,180.00. Studio's final three reports totalled PKR 4,720.00. Coast/Orbit's separate report totalled PKR 590.00. The database contained exactly three imports, three sealed filings, four invoices/claims and three filing audit events after the exercised retries.
+- Injected response loss after committed upload and committed filing, blocked recovery reads, and reloaded the tab. Restored reads recovered the existing records. A separate pre-commit interruption preserved its command across reload; the explicit retry sent an identical UUID/payload and produced one filing. Simulated unavailable session storage sent **zero upload commands**.
+- Downloaded canonical JSON independently reproduced SHA-256 `e9ba4d88f5275ba88fdb8f2248baa6e724d15c1d59924b5d9f5f335537bb9dba`. A modified download response was rejected by the browser hash check.
+- Agency source-import/full-receipt reads were forbidden; a copied claim ID from the other agency was absent (404). PBA auditor oversight saw the four submitted claims; the policy preparer had neither intake nor reported-claim navigation. Claim search, empty results, simulated read failure/retry and preserved filters after refresh passed.
+- A synthetic second reference option confirmed that selected-import cycle provenance/receipt stayed unchanged. This exercised browser selection behavior, not an additional approved calendar.
+- Final agency-claim and upload/archived-review surfaces passed **10 geometry checks** at 360, 390, 768, 1280 and 1440 pixels. Focused axe scans found no violations on preparer review, approver error/receipt, pending recovery, desktop/mobile claims/detail and upload/archived review. Keyboard disclosures, modal containment/Escape/focus return and the existing registry dialog passed. Desktop/mobile screenshots were visually inspected; artifacts stay local.
+- Browser checks found and fixed an off-screen table label that expanded mobile page width, transient cycle selection loss during refresh, and focus leaving a single-button modal. TypeScript/production build, Prettier and Ruff/diff checks passed. The UI commit is checked by both jobs in [GitHub Actions](https://github.com/WaqasMir89/pba-clearance/actions).
+
+This is sandbox evidence using invented data and injected browser/network faults. It does not approve PBA rules, production identities, legal declarations, providers, evidence storage, device/cross-browser behavior or production operation. S05 dispute intake is the next delivery step; production filing and all later financial/enforcement effects remain disabled.

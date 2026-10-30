@@ -1,7 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-import type { FormEvent, ReactNode } from "react";
-import { api, ApiError, errorMessage, fieldMessages } from "./api";
+import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
+import { api, ApiError, errorMessage } from "./api";
 import { useDebounced, useResource } from "./hooks";
+import { dateTime, dateOnly } from "./format";
+import { ComplaintIntake } from "./ComplaintIntake";
+import { ReportedClaims } from "./ReportedClaims";
+import {
+  Icon,
+  Brand,
+  ErrorNotice,
+  Empty,
+  Loading,
+  Pager,
+  Dialog,
+  FormError,
+} from "./components";
 import type {
   AuditEvent,
   Client,
@@ -18,6 +31,8 @@ type Section =
   | "organizations"
   | "clients"
   | "calendar"
+  | "intake"
+  | "claims"
   | "policies"
   | "activity";
 const REFERENCE_PATTERN = "[a-zA-Z0-9_\\-]+";
@@ -38,6 +53,16 @@ const sections: { id: Section; label: string; icon: string }[] = [
     icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M17 4a4 4 0 0 1 0 7 M22 21v-2a4 4 0 0 0-3-3.87",
   },
   {
+    id: "intake",
+    label: "Complaint intake",
+    icon: "M12 3v12 M7 8l5-5 5 5 M4 14v6h16v-6",
+  },
+  {
+    id: "claims",
+    label: "Reported claims",
+    icon: "M6 3h12v18H6z M9 7h6 M9 11h6 M9 15h3",
+  },
+  {
     id: "calendar",
     label: "Cycle calendar",
     icon: "M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2 M16 3v4 M8 3v4 M3 11h18",
@@ -53,86 +78,6 @@ const sections: { id: Section; label: string; icon: string }[] = [
     icon: "M3 12a9 9 0 1 0 3-6 M3 3v5h5 M12 7v5l3 2",
   },
 ];
-const dateTime = (value: string) =>
-  new Intl.DateTimeFormat("en-PK", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Karachi",
-  }).format(new Date(value));
-const dateOnly = (value: string) =>
-  new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "Asia/Karachi",
-  }).format(new Date(`${value}T00:00:00+05:00`));
-
-function Icon({ path }: { path: string }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d={path} />
-    </svg>
-  );
-}
-function Brand() {
-  return (
-    <div className="brand">
-      <span className="brand-mark" aria-hidden="true">
-        c
-      </span>
-      <div>
-        Clearance<span>AGENCY RELATIONSHIPS</span>
-      </div>
-    </div>
-  );
-}
-function ErrorNotice({
-  message,
-  retry,
-}: {
-  message: string;
-  retry?: () => void;
-}) {
-  return (
-    <div className="error-notice" role="alert">
-      <strong>Unable to complete this request</strong>
-      <p>{message}</p>
-      {retry && (
-        <button className="text-button" onClick={retry}>
-          Try again ↗
-        </button>
-      )}
-    </div>
-  );
-}
-function Empty({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div className="empty-state">
-      <span className="empty-line" />
-      <h3>{title}</h3>
-      <p>{children}</p>
-    </div>
-  );
-}
-function Loading() {
-  return (
-    <div className="loading" role="status">
-      <span className="spinner" />
-      Loading workspace records…
-    </div>
-  );
-}
-
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -349,7 +294,7 @@ function Workspace({
   onSwitch: (id: string) => void;
   onSignedOut: () => void;
 }) {
-  const [section, setSection] = useState<Section>("overview");
+  const [requestedSection, setSection] = useState<Section>("overview");
   const [signingOut, setSigningOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
   const [revision, setRevision] = useState(0);
@@ -360,15 +305,27 @@ function Workspace({
     organizationId,
     revision,
   );
+  // Sealed cycle references are immutable. Keep the same selection during a refresh;
+  // Workspace is remounted on organization changes, so this cache cannot cross scopes.
+  const [knownCycles, setKnownCycles] = useState<Page<Cycle>>();
+  useEffect(() => {
+    if (cycles.data) setKnownCycles(cycles.data);
+  }, [cycles.data]);
+  const referenceCycles = cycles.data || knownCycles;
   const cycle =
-    cycles.data?.results.find((c) => c.id === cycleId) ||
-    cycles.data?.results[0];
-  const currentSection = sections.find((s) => s.id === section)!;
+    referenceCycles?.results.find((c) => c.id === cycleId) ||
+    referenceCycles?.results[0];
   const allowedSections = sections.filter(
     (s) =>
       (s.id !== "activity" || membership?.can_view_audit) &&
-      (s.id !== "policies" || membership?.can_view_policy),
+      (s.id !== "policies" || membership?.can_view_policy) &&
+      (s.id !== "intake" || membership?.can_stage_complaints) &&
+      (s.id !== "claims" || membership?.can_view_claims),
   );
+  const section = allowedSections.some((s) => s.id === requestedSection)
+    ? requestedSection
+    : "overview";
+  const currentSection = sections.find((s) => s.id === section)!;
   async function signOut() {
     setSigningOut(true);
     setLogoutError("");
@@ -495,14 +452,14 @@ function Workspace({
                     id="cycle-select"
                     value={cycle?.id || ""}
                     onChange={(e) => setCycleId(e.target.value)}
-                    disabled={!cycles.data?.results.length}
+                    disabled={!referenceCycles?.results.length}
                   >
-                    {cycles.data?.results.map((c) => (
+                    {referenceCycles?.results.map((c) => (
                       <option value={c.id} key={c.id}>
                         {c.code}
                       </option>
                     ))}
-                    {!cycles.data?.results.length && (
+                    {!referenceCycles?.results.length && (
                       <option value="">
                         {cycles.loading
                           ? "Loading cycles…"
@@ -527,6 +484,13 @@ function Workspace({
                 <span className="scope-label">CANDIDATE ONLY</span>
               </div>
               <div className="page-body" key={section}>
+                {(section === "intake" || section === "claims") &&
+                  cycles.error && (
+                    <ErrorNotice
+                      message={`Reference calendars could not be refreshed. ${cycles.error}`}
+                      retry={refresh}
+                    />
+                  )}
                 {section === "overview" && (
                   <Overview
                     membership={membership}
@@ -555,6 +519,25 @@ function Workspace({
                   ) : (
                     <Calendar cycle={cycle} />
                   ))}
+                {section === "intake" && membership.can_stage_complaints && (
+                  <ComplaintIntake
+                    userId={session.user.id}
+                    membership={membership}
+                    cycle={cycle}
+                    cycles={referenceCycles?.results || []}
+                    revision={revision}
+                    refresh={refresh}
+                  />
+                )}
+                {section === "claims" && membership.can_view_claims && (
+                  <ReportedClaims
+                    key={cycle?.id || "all"}
+                    membership={membership}
+                    cycle={cycle}
+                    revision={revision}
+                    refresh={refresh}
+                  />
+                )}
                 {section === "policies" && (
                   <PolicyList
                     membership={membership}
@@ -587,6 +570,10 @@ function Workspace({
 }
 
 const descriptions: Record<Exclude<Section, "overview">, string> = {
+  intake:
+    "Stage fictional invoice rows, resolve feedback and file an immutable sandbox report.",
+  claims:
+    "Filed channel assertions within your organization scope. Settlement remains unverified.",
   organizations:
     "Named channel and agency records within your permitted scope.",
   clients:
@@ -716,12 +703,20 @@ function Overview({
           <h2>
             {membership.can_prepare_policy
               ? "Prepare the source register"
-              : "Review the foundation records"}
+              : membership.can_stage_complaints
+                ? "Prepare a complaint import"
+                : membership.can_view_claims
+                  ? "Review filed reports"
+                  : "Review the foundation records"}
           </h2>
           <p>
             {membership.can_prepare_policy
               ? "Save candidate versions with the exact source reference and digest. Independent approval comes in a later delivery."
-              : "Check organization identities and permitted client visibility. Complaint intake is the next implementation step."}
+              : membership.can_stage_complaints
+                ? "Stage a fictional CSV, review row feedback and pass the ready rows to a channel approver."
+                : membership.can_view_claims
+                  ? "Reported claims are available within your scope. Payment, disputes and verified settlement remain separate."
+                  : "Check organization identities and permitted client visibility."}
           </p>
         </div>
       </section>
@@ -786,42 +781,6 @@ function OrganizationTable({ records }: { records: Organization[] }) {
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function Pager({
-  count,
-  page,
-  hasNext,
-  setPage,
-}: {
-  count: number;
-  page: number;
-  hasNext: boolean;
-  setPage: (page: number) => void;
-}) {
-  return (
-    <div className="table-footer">
-      <span>
-        {count} record{count !== 1 ? "s" : ""} · Page {page}
-      </span>
-      <div>
-        <button
-          className="small-button"
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
-          Previous
-        </button>
-        <button
-          className="small-button"
-          disabled={!hasNext}
-          onClick={() => setPage(page + 1)}
-        >
-          Next
-        </button>
-      </div>
     </div>
   );
 }
@@ -1225,76 +1184,6 @@ function Activity({
   );
 }
 
-function Dialog({
-  title,
-  children,
-  busy,
-  onClose,
-}: {
-  title: string;
-  children: ReactNode;
-  busy: boolean;
-  onClose: () => void;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const dialog = ref.current!;
-    const previousFocus =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    dialog.showModal();
-    dialog.querySelector<HTMLInputElement>("input")?.focus();
-    return () => {
-      dialog.close();
-      if (previousFocus?.isConnected)
-        previousFocus.focus({ preventScroll: true });
-    };
-  }, []);
-  return (
-    <dialog
-      ref={ref}
-      className="form-dialog"
-      aria-labelledby="dialog-title"
-      onCancel={(e) => {
-        e.preventDefault();
-        if (!busy) {
-          ref.current?.close();
-          onClose();
-        }
-      }}
-    >
-      <div className="dialog-heading">
-        <h2 id="dialog-title">{title}</h2>
-        <button
-          aria-label="Close dialog"
-          className="close-button"
-          disabled={busy}
-          onClick={onClose}
-        >
-          ×
-        </button>
-      </div>
-      {children}
-    </dialog>
-  );
-}
-function FormError({ error }: { error: unknown }) {
-  if (!error) return null;
-  const fields = error instanceof ApiError ? fieldMessages(error.fields) : [];
-  return (
-    <div className="form-error" role="alert">
-      <p>{errorMessage(error)}</p>
-      {fields.length > 0 && (
-        <ul>
-          {fields.map((message, index) => (
-            <li key={index}>{message}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 function RegistryForm({
   kind,
   organizationId,

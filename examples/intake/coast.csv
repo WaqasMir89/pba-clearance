@@ -1,0 +1,2 @@
+agency_code,client_code,financial_year,invoice_number,invoice_date,broadcast_start,broadcast_end,principal_amount,gst_amount,invoice_total,reported_due,currency,delivery_reference,invoice_delivered_on,release_order_reference,source_id,balance_explanation
+demo-orbit,demo-cedar,2026-2027,DEMO-COAST-201,2026-08-05,2026-07-01,2026-07-31,500.00,90.00,590.00,590.00,PKR,Fictional coast delivery,2026-08-06,Fictional RO A,fictional-201,

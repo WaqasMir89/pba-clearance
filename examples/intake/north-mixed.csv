@@ -1,0 +1,4 @@
+agency_code,client_code,financial_year,invoice_number,invoice_date,broadcast_start,broadcast_end,principal_amount,gst_amount,invoice_total,reported_due,currency,delivery_reference,invoice_delivered_on,release_order_reference,source_id,balance_explanation
+demo-studio,demo-loom,2026-2027,DEMO-NORTH-101,2026-08-05,2026-07-01,2026-07-31,1000.00,180.00,1180.00,1180.00,PKR,Fictional delivery A,2026-08-06,Fictional RO A,fictional-101,
+demo-studio,demo-metro,2026-2027,DEMO-NORTH-102,2026-08-05,2026-07-01,2026-07-31,2000.00,360.00,2360.00,2360.00,PKR,Fictional delivery B,2026-08-06,Fictional RO A,fictional-102,
+demo-studio,demo-loom,2026-2027,DEMO-NORTH-103,2026-08-05,2026-07-01,2026-07-31,1000.00,180.00,1190.00,1180.00,PKR,Fictional delivery C,2026-08-06,Fictional RO A,fictional-103,

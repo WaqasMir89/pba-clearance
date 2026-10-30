@@ -626,6 +626,7 @@ input::placeholder {
   font-size: 10px;
 }
 .table-scroll {
+  position: relative;
   overflow-x: auto;
   width: 100%;
 }
@@ -1110,6 +1111,346 @@ th,
 .cycle-switch label,
 .user-menu small {
   font-size: 10px;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.upload-region {
+  padding: 24px 0 26px;
+  margin-bottom: 20px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.upload-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  margin: 22px 0 16px;
+}
+.upload-form label,
+.guide-search,
+.status-filter {
+  display: grid;
+  gap: 10px;
+  color: #354d40;
+  font-size: 12px;
+}
+.upload-form input {
+  font-size: 12px;
+}
+.upload-form > div {
+  display: grid;
+  gap: 10px;
+}
+input::file-selector-button {
+  background: #e6ecdf;
+  color: var(--ink);
+  border: 0;
+  border-radius: 3px;
+  padding: 8px 10px;
+  margin-right: 12px;
+  font: inherit;
+  cursor: pointer;
+}
+.intake-help {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 18px;
+}
+.intake-help summary,
+.row-source summary {
+  color: var(--accent);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+.intake-help > p {
+  margin: 14px 0;
+}
+.header-list {
+  line-height: 1.9;
+  color: var(--muted);
+}
+.guide-search {
+  max-width: 420px;
+  margin-top: 22px;
+}
+.guide-search input {
+  font-size: 12px;
+}
+.code-list {
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.code-list li {
+  padding: 7px 0;
+}
+.code-list span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+.selected-row {
+  background: #edf2e8;
+}
+.source-link {
+  display: block;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.import-review,
+.filing-panel,
+.receipt-panel,
+.preparer-note {
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+  margin-top: 32px;
+}
+.import-review .eyebrow,
+.filing-panel .eyebrow,
+.receipt-panel .eyebrow {
+  margin: 0 0 10px;
+}
+.source-facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 26px;
+  margin-bottom: 26px;
+}
+.source-facts dt {
+  margin-top: 0;
+}
+.review-counts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-top: 24px;
+}
+.review-counts > div {
+  padding: 18px 20px;
+  border-left: 1px solid var(--line);
+}
+.review-counts > div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.review-counts span,
+.review-total span,
+.claim-summary span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+.review-counts strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 27px;
+  font-weight: 450;
+}
+.review-total {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: baseline;
+  padding: 22px 0 28px;
+}
+.review-total strong {
+  font-size: 22px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.review-total small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.status-filter {
+  grid-template-columns: auto auto;
+  align-items: center;
+  flex-shrink: 0;
+}
+.status-filter select {
+  padding: 8px 26px 8px 12px;
+  font-size: 12px;
+}
+.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.review-table {
+  min-width: 700px;
+}
+.review-table td {
+  vertical-align: top;
+  max-width: 280px;
+  overflow-wrap: anywhere;
+}
+.row-source dl {
+  min-width: 180px;
+  max-width: 240px;
+}
+.row-source dt {
+  margin-top: 14px;
+}
+.row-source dd {
+  font-size: 11px;
+}
+.row-status.invalid {
+  background: #faeae2;
+  color: #953c30;
+}
+.row-status.review {
+  background: #f1edda;
+  color: #6d5c28;
+}
+.row-status.duplicate {
+  background: #ecefe8;
+  color: #53634c;
+}
+.row-issues {
+  padding-left: 15px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.row-issues li + li {
+  margin-top: 8px;
+}
+.recovery-notice {
+  padding: 16px 18px;
+  border-left: 2px solid #9a8d51;
+  background: #f1efe1;
+  color: #5e5737;
+  font-size: 12px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+  overflow-wrap: anywhere;
+}
+.recovery-notice p {
+  margin: 6px 0 14px;
+}
+.recovery-copy {
+  margin: 16px 0;
+}
+.filing-form {
+  margin: 20px 0;
+  max-width: 700px;
+}
+.filing-clock {
+  display: grid;
+  gap: 16px;
+}
+.filing-clock label {
+  max-width: 320px;
+}
+.window-times {
+  color: #52634b;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.stack-form .checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.checkbox-label input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+.receipt-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 28px;
+  margin-bottom: 26px;
+}
+.receipt-facts dd {
+  color: #354f3d;
+  font-size: 12px;
+}
+.preparer-note h3 {
+  margin-bottom: 12px;
+}
+.claim-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(150px, 220px);
+  gap: 28px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0 26px;
+  margin-bottom: 20px;
+}
+.claim-summary strong {
+  display: block;
+  font-size: 27px;
+  font-weight: 450;
+  margin-top: 12px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.claim-summary p {
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+.form-dialog:has(.receipt-panel) {
+  width: 850px;
+}
+
+@media (max-width: 1050px) {
+  .upload-form,
+  .source-facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .upload-form > div {
+    justify-items: start;
+  }
+  .claim-summary {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .claim-summary p {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 600px) {
+  .review-counts > div {
+    padding: 16px 10px;
+  }
+  .review-counts span {
+    font-size: 10px;
+    min-height: 28px;
+    line-height: 1.4;
+  }
+  .review-total {
+    display: grid;
+    gap: 10px;
+  }
+  .receipt-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .claim-summary {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+  .claim-summary strong {
+    font-size: 25px;
+  }
+  .import-review .section-heading h2 {
+    overflow-wrap: anywhere;
+  }
 }
 
 @media (max-width: 1200px) {
