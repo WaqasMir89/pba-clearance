@@ -23,7 +23,8 @@ body {
 }
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 button,
@@ -258,7 +259,8 @@ button {
   color: #354d40;
 }
 input,
-select {
+select,
+textarea {
   border: 1px solid #d7ded3;
   border-radius: 4px;
   padding: 12px;
@@ -269,6 +271,11 @@ select {
 }
 input {
   width: 100%;
+}
+textarea {
+  width: 100%;
+  resize: vertical;
+  line-height: 1.7;
 }
 input::placeholder {
   color: #5d6c59;
@@ -1408,6 +1415,88 @@ input::file-selector-button {
 .form-dialog:has(.receipt-panel) {
   width: 850px;
 }
+.form-dialog:has(.response-workspace) {
+  width: 900px;
+}
+.response-workspace {
+  border-top: 1px solid var(--line);
+  padding-top: 26px;
+  margin-top: 24px;
+}
+.form-dialog > .response-workspace {
+  border-top: 0;
+}
+.response-workspace .eyebrow {
+  margin-bottom: 12px;
+}
+.response-form-region,
+.response-history,
+.evidence-history {
+  border-top: 1px solid var(--line);
+  margin-top: 26px;
+  padding-top: 24px;
+}
+.response-form-region .stack-form {
+  max-width: 720px;
+  margin: 22px 0;
+}
+.response-form-region textarea {
+  font-size: 12px;
+}
+.response-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.response-state strong {
+  font-size: 18px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.window-context {
+  margin: 20px 0;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.window-context p + p {
+  margin-top: 10px;
+}
+.statement-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.9;
+}
+.evidence-entry {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.evidence-entry .section-heading {
+  margin-bottom: 14px;
+}
+.evidence-entry h3 {
+  font-size: 13px;
+}
+.response-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.response-summary > p {
+  grid-column: 1/-1;
+}
+.response-summary small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 10px;
+}
+.recovery-notice ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+}
+.recovery-notice li > button {
+  margin-left: 20px;
+}
 
 @media (max-width: 1050px) {
   .upload-form,
@@ -1420,6 +1509,9 @@ input::file-selector-button {
   }
   .claim-summary {
     grid-template-columns: auto minmax(0, 1fr);
+  }
+  .response-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .claim-summary p {
     grid-column: 1/-1;

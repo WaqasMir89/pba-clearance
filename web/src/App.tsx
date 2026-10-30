@@ -5,6 +5,7 @@ import { useDebounced, useResource } from "./hooks";
 import { dateTime, dateOnly } from "./format";
 import { ComplaintIntake } from "./ComplaintIntake";
 import { ReportedClaims } from "./ReportedClaims";
+import { ObjectionRegister } from "./ObjectionRegister";
 import {
   Icon,
   Brand,
@@ -33,6 +34,7 @@ type Section =
   | "calendar"
   | "intake"
   | "claims"
+  | "objections"
   | "policies"
   | "activity";
 const REFERENCE_PATTERN = "[a-zA-Z0-9_\\-]+";
@@ -61,6 +63,11 @@ const sections: { id: Section; label: string; icon: string }[] = [
     id: "claims",
     label: "Reported claims",
     icon: "M6 3h12v18H6z M9 7h6 M9 11h6 M9 15h3",
+  },
+  {
+    id: "objections",
+    label: "Objections & evidence",
+    icon: "M5 3h14v18H5z M8 7h8 M8 11h5 M8 15h7",
   },
   {
     id: "calendar",
@@ -320,7 +327,8 @@ function Workspace({
       (s.id !== "activity" || membership?.can_view_audit) &&
       (s.id !== "policies" || membership?.can_view_policy) &&
       (s.id !== "intake" || membership?.can_stage_complaints) &&
-      (s.id !== "claims" || membership?.can_view_claims),
+      (s.id !== "claims" || membership?.can_view_claims) &&
+      (s.id !== "objections" || membership?.can_view_claims),
   );
   const section = allowedSections.some((s) => s.id === requestedSection)
     ? requestedSection
@@ -484,7 +492,9 @@ function Workspace({
                 <span className="scope-label">CANDIDATE ONLY</span>
               </div>
               <div className="page-body" key={section}>
-                {(section === "intake" || section === "claims") &&
+                {(section === "intake" ||
+                  section === "claims" ||
+                  section === "objections") &&
                   cycles.error && (
                     <ErrorNotice
                       message={`Reference calendars could not be refreshed. ${cycles.error}`}
@@ -533,6 +543,16 @@ function Workspace({
                   <ReportedClaims
                     key={cycle?.id || "all"}
                     membership={membership}
+                    userId={session.user.id}
+                    cycle={cycle}
+                    revision={revision}
+                    refresh={refresh}
+                  />
+                )}
+                {section === "objections" && membership.can_view_claims && (
+                  <ObjectionRegister
+                    membership={membership}
+                    userId={session.user.id}
                     cycle={cycle}
                     revision={revision}
                     refresh={refresh}
@@ -574,6 +594,8 @@ const descriptions: Record<Exclude<Section, "overview">, string> = {
     "Stage fictional invoice rows, resolve feedback and file an immutable sandbox report.",
   claims:
     "Filed channel assertions within your organization scope. Settlement remains unverified.",
+  objections:
+    "Agency-private preparation, signed objection history and supplementary evidence statements.",
   organizations:
     "Named channel and agency records within your permitted scope.",
   clients:

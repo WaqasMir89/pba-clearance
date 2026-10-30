@@ -1,0 +1,130 @@
+export type Declaration = { version: string; text: string };
+export type ResponseOptions = {
+  reasons: Record<string, string>;
+  declarations: Record<"submit" | "withdraw" | "evidence", Declaration>;
+};
+export type ResponseWindow = {
+  id: string;
+  cycle_id: string;
+  opens_at: string;
+  closes_at: string;
+  source_reference: string;
+  source_sha256: string;
+  status: "candidate";
+};
+export type ClaimSnapshot = {
+  claim_id: string;
+  invoice_number: string;
+  financial_year: string;
+  channel_id: string;
+  channel_name: string;
+  agency_id: string;
+  agency_name: string;
+  client_id: string;
+  client_name: string;
+  reported_due: string;
+  cycle_id: string;
+  cycle_code: string;
+  source_submission_id: string;
+  source_submission_hash: string;
+};
+export type DraftSummary = {
+  id: string;
+  claim_id: string;
+  agency_id: string;
+  base_version: number;
+  disputed_amount: string;
+  reason_code: string;
+  claim_snapshot: ClaimSnapshot;
+  content_hash: string;
+  created_by: string;
+  created_at: string;
+  submission_id: string | null;
+};
+export type ObjectionDraft = DraftSummary & {
+  explanation: string;
+  supporting_statement: string;
+  source_reference: string;
+  preview: {
+    current_version: number;
+    current_state: "none" | "open" | "withdrawn";
+    preview_hash: string;
+    issues: { code: string; message: string }[];
+    submission_id: string | null;
+    window: ResponseWindow | null;
+    declaration: Declaration;
+  };
+};
+export type DisputeCase = {
+  id: string;
+  claim_id: string;
+  agency_id: string;
+  channel_id: string;
+  invoice_number: string;
+  channel_name: string;
+  agency_name: string;
+  client_name: string;
+  cycle_id: string;
+  cycle_code: string;
+  reported_due: string;
+  current_version: number;
+  latest_revision_id: string;
+  state: "open" | "withdrawn";
+  current_disputed_amount: string;
+  created_at: string;
+};
+export type RevisionSummary = {
+  id: string;
+  case_id: string;
+  claim_id: string;
+  agency_id: string;
+  version: number;
+  action: "raised" | "amended" | "withdrawn" | "reopened";
+  disputed_amount: string;
+  simulation_at: string;
+  command_type: "submit" | "withdraw";
+  content_hash: string;
+  created_by: string;
+  created_at: string;
+};
+export type DisputeRevision = RevisionSummary & {
+  receipt: {
+    claim: ClaimSnapshot;
+    explanation: string;
+    reason_code: string | null;
+    supporting_statement: string | null;
+    source_reference: string | null;
+    draft_id: string | null;
+    draft_hash: string | null;
+    window: ResponseWindow | null;
+    previous_revision_id: string | null;
+    previous_revision_hash: string | null;
+    declaration: Declaration;
+    financial_effect: "none";
+    enforcement_effect: "none";
+  };
+};
+export type EvidenceStatement = {
+  id: string;
+  claim_id: string;
+  organization_id: string;
+  organization_name: string;
+  statement: string;
+  source_reference: string;
+  simulation_at: string;
+  timing: "before_window" | "within_window" | "late" | "window_unknown";
+  content_hash: string;
+  created_by: string;
+  created_at: string;
+};
+export type ClaimGroup = {
+  group_id: string;
+  group_name: string;
+  claim_count: number;
+  reported_due_total: string;
+  disputed_amount_total: string;
+  active_objection_count: number;
+  accepted_credit_total: string | null;
+  verified_settlement_total: string | null;
+  remaining_reportable_balance: string | null;
+};

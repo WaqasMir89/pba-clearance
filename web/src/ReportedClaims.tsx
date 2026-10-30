@@ -1,17 +1,21 @@
 import { useState } from "react";
+import { ClaimResponses } from "./ClaimResponses";
 import { Dialog, Empty, ErrorNotice, Loading, Pager } from "./components";
 import { amount, dateOnly, dateTime } from "./format";
 import { useDebounced, useResource } from "./hooks";
 import { Receipt } from "./Receipt";
+import type { ClaimGroup } from "./responseTypes";
 import type { Claim, ClaimSummary, Cycle, Membership, Page } from "./types";
 
 export function ReportedClaims({
   membership,
+  userId,
   cycle,
   revision,
   refresh,
 }: {
   membership: Membership;
+  userId: string;
   cycle?: Cycle;
   revision: number;
   refresh: () => void;
@@ -20,6 +24,7 @@ export function ReportedClaims({
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState("");
+  const [group, setGroup] = useState("reports");
   const search = useDebounced(query);
   const filters = `q=${encodeURIComponent(search)}${cycle ? `&cycle_id=${cycle.id}` : ""}`;
   const list = useResource<Page<Claim>>(
@@ -53,7 +58,7 @@ export function ReportedClaims({
       {summary.error ? (
         <ErrorNotice message={summary.error} retry={refresh} />
       ) : (
-        <div className="claim-summary">
+        <div className="claim-summary response-summary">
           <div>
             <span>Visible filed claims</span>
             <strong>{summary.data?.count ?? "—"}</strong>
@@ -64,10 +69,21 @@ export function ReportedClaims({
               {summary.data ? amount(summary.data.reported_due_total) : "—"}
             </strong>
           </div>
+          <div>
+            <span>Separately disputed · PKR</span>
+            <strong>
+              {summary.data ? amount(summary.data.disputed_amount_total) : "—"}
+            </strong>
+            <small>
+              {summary.data?.active_objection_count ?? "—"} active objections
+            </small>
+          </div>
           <p>
-            Unverified channel assertions.
+            Accepted credits: unknown · Verified settlement: unknown · Remaining
+            reportable balance: unknown.
             <br />
-            Disputes and settlement are separate workflows.
+            Objections do not reduce reported due or authorize an enforcement
+            hold.
           </p>
         </div>
       )}
@@ -83,9 +99,29 @@ export function ReportedClaims({
             placeholder="Search invoice number…"
           />
         </label>
-        <span className="badge neutral">Reported only</span>
+        <label className="status-filter">
+          Report view
+          <select
+            value={group}
+            onChange={(event) => setGroup(event.target.value)}
+          >
+            <option value="reports">Invoice reports</option>
+            <option value="channel">By channel</option>
+            <option value="client">By client</option>
+            <option value="cycle">By cycle</option>
+          </select>
+        </label>
       </div>
-      {list.loading ? (
+      {group !== "reports" ? (
+        <ClaimBreakdown
+          key={`${group}:${filters}`}
+          group={group}
+          filters={filters}
+          organizationId={organizationId}
+          revision={revision}
+          refresh={refresh}
+        />
+      ) : list.loading ? (
         <Loading />
       ) : list.error ? (
         <ErrorNotice message={list.error} retry={refresh} />
@@ -106,6 +142,7 @@ export function ReportedClaims({
                   <th>Agency / client</th>
                   <th className="numeric">Original total · PKR</th>
                   <th className="numeric">Reported due · PKR</th>
+                  <th className="numeric">Disputed · PKR</th>
                   <th>
                     <span className="sr-only">Details</span>
                   </th>
@@ -115,7 +152,13 @@ export function ReportedClaims({
                 {list.data.results.map((claim) => (
                   <tr key={claim.id}>
                     <td>
-                      <strong>{claim.invoice_number}</strong>
+                      <button
+                        className="text-button source-link"
+                        aria-label={`Open claim ${claim.invoice_number}`}
+                        onClick={() => setSelected(claim.id)}
+                      >
+                        {claim.invoice_number}
+                      </button>
                       <span className="subject-reference">
                         {claim.financial_year}
                       </span>
@@ -129,6 +172,14 @@ export function ReportedClaims({
                     </td>
                     <td className="numeric">{amount(claim.invoice_total)}</td>
                     <td className="numeric">{amount(claim.reported_due)}</td>
+                    <td className="numeric">
+                      {amount(claim.disputed_amount)}
+                      <span className="subject-reference">
+                        {claim.objection_state === "none"
+                          ? "No objection"
+                          : `${claim.objection_state} · v${claim.objection_version}`}
+                      </span>
+                    </td>
                     <td>
                       <button
                         className="text-button"
@@ -167,8 +218,9 @@ export function ReportedClaims({
         <ClaimDetail
           key={selected}
           id={selected}
-          organizationId={organizationId}
-          canViewReceipt={membership.organization.kind !== "agency"}
+          membership={membership}
+          userId={userId}
+          onChanged={refresh}
           onClose={() => setSelected("")}
         />
       )}
@@ -176,17 +228,21 @@ export function ReportedClaims({
   );
 }
 
-function ClaimDetail({
+export function ClaimDetail({
   id,
-  organizationId,
-  canViewReceipt,
+  membership,
+  userId,
+  onChanged,
   onClose,
 }: {
   id: string;
-  organizationId: string;
-  canViewReceipt: boolean;
+  membership: Membership;
+  userId: string;
+  onChanged: () => void;
   onClose: () => void;
 }) {
+  const organizationId = membership.organization.id;
+  const canViewReceipt = membership.organization.kind !== "agency";
   const [attempt, setAttempt] = useState(0);
   const [showReceipt, setShowReceipt] = useState(false);
   const claim = useResource<Claim>(`/claims/${id}/`, organizationId, attempt);
@@ -265,6 +321,16 @@ function ClaimDetail({
                 <dd className="mono">{record.id}</dd>
               </div>
             </dl>
+            <ClaimResponses
+              claim={record}
+              membership={membership}
+              userId={userId}
+              onChanged={() => {
+                setAttempt((value) => value + 1);
+                onChanged();
+              }}
+              onDraftPrepared={onChanged}
+            />
             {canViewReceipt && (
               <button
                 className="text-button"
@@ -283,5 +349,86 @@ function ClaimDetail({
         )
       )}
     </Dialog>
+  );
+}
+
+function ClaimBreakdown({
+  group,
+  filters,
+  organizationId,
+  revision,
+  refresh,
+}: {
+  group: string;
+  filters: string;
+  organizationId: string;
+  revision: number;
+  refresh: () => void;
+}) {
+  const [page, setPage] = useState(1);
+  const data = useResource<Page<ClaimGroup>>(
+    `/claims/breakdown/?group_by=${group}&${filters}&page=${page}`,
+    organizationId,
+    revision,
+  );
+  if (data.loading) return <Loading />;
+  if (data.error) return <ErrorNotice message={data.error} retry={refresh} />;
+  if (!data.data?.results.length)
+    return (
+      <Empty title="No grouped reports">
+        No filed claims match this scope and search.
+      </Empty>
+    );
+  return (
+    <>
+      <div
+        className="table-scroll"
+        tabIndex={0}
+        role="region"
+        aria-label={`Claims grouped by ${group}`}
+      >
+        <table>
+          <caption className="sr-only">
+            Scoped grouped claim and objection totals
+          </caption>
+          <thead>
+            <tr>
+              <th>
+                {group === "channel"
+                  ? "Channel"
+                  : group === "client"
+                    ? "Client"
+                    : "Cycle"}
+              </th>
+              <th>Claims</th>
+              <th className="numeric">Reported · PKR</th>
+              <th>Open objections</th>
+              <th className="numeric">Disputed · PKR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.data.results.map((record) => (
+              <tr key={record.group_id}>
+                <td>
+                  <strong>{record.group_name}</strong>
+                </td>
+                <td>{record.claim_count}</td>
+                <td className="numeric">{amount(record.reported_due_total)}</td>
+                <td>{record.active_objection_count}</td>
+                <td className="numeric">
+                  {amount(record.disputed_amount_total)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Pager
+        count={data.data.count}
+        page={page}
+        hasNext={!!data.data.next}
+        setPage={setPage}
+      />
+    </>
   );
 }

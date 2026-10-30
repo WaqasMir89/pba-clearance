@@ -2,11 +2,13 @@
 
 Prepared 30 October 2026. Implementation and public delivery are authorized. This extends S04 (`9f8ad58`) and does not approve policy or enable production filing.
 
+Status: the sandbox API and connected browser workflow are implemented. Executed checks are recorded in [delivery evidence](../progress.md#s05b--connected-objections-evidence-and-grouped-reports); the [fictional walkthrough](../../examples/agency-response-walkthrough.md) exercises the delivered scope. Production release gates below remain open.
+
 ## Evidence and delivery boundary
 
 The supplied plan sections 5, 6.3, 6.5, 7.1 and 8 require named agency signatories, invoice-linked objections with amount/reason/evidence, retained history, a late-evidence route and an explicit separation from money and enforcement. `BUILD_PLAN.md` R08/S05 and original A08/A22/A23 apply. D01–D04 and privileged MFA remain unresolved external gates.
 
-Current source has immutable reported claims/receipts, exact decimals, scoped sessions and candidate calendars. It has no objection records, financial ledger, approved objection window, document store or adjudication authority. The five existing milestone types do not define an objection window, and sealed calendars cannot be extended. Preserve all S04 source/receipt history.
+At the start of S05, source had immutable reported claims/receipts, exact decimals, scoped sessions and candidate calendars, with no objection records, financial ledger, approved objection window, document store or adjudication authority. The five existing milestone types do not define an objection window, and sealed calendars cannot be extended. Preserve all S04 source/receipt history.
 
 Deliver this sandbox slice in two verified commits: (1) deterministic dispute/evidence API and PostgreSQL guards, (2) connected agency/channel review, recovery and grouped reports. Production policy, financial attestation, dispute decisions/appeals, notice holds, original-document uploads and malware/retention controls remain later work. Evidence here consists of bounded plain-text statements and supplied references, explicitly unverified; a reference is not a verified original attachment.
 

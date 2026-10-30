@@ -2,7 +2,7 @@
 
 Prepared 30 October 2026. Implementation is authorized; delivery proceeds through verified commits on `main`. The original supplied engineering plan remains the overall scope reference. This document translates it into executable delivery steps without publishing private discovery/commercial files.
 
-Current delivery: S00–S04 sandbox implemented with verification; S05 objection/evidence API implemented and browser work in progress. See `docs/progress.md` and per-commit GitHub Actions for evidence. Production rule/evidence/identity acceptance, the rest of S05 and S06–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
+Current delivery: S00–S05 sandbox implemented with verification, including connected agency objections, signed history, late evidence statements and grouped reports. See `docs/progress.md` and per-commit GitHub Actions for evidence. S06 verified settlement and physical custody is next. Production rule/evidence/identity acceptance and S06–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
 
 ## Evidence and decisions
 
@@ -121,6 +121,8 @@ Verification/exit: A01–A03/A08/A22–A23 on PostgreSQL, immutable receipt repl
 ### S05 — Agency response and dispute intake
 
 Detailed contract: [sandbox agency disputes](docs/plans/agency-disputes.md). Deliver and verify the API and connected browser separately. Unsubmitted drafts are agency-private; signed revisions and supplementary statements follow the original claim's parties. Monetary/enforcement effects remain none until approved later workflows exist.
+
+Sandbox delivery is implemented in separate API and browser commits, with a [fictional walkthrough](examples/agency-response-walkthrough.md). Evidence is plain text with supplied unverified references; private original-document storage, retention and production authority acceptance remain release work.
 
 Outcome: scoped agency workspace, invoice-linked objections and late evidence route. Separate claimed, disputed, accepted credits and verified settlement figures.
 

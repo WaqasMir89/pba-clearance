@@ -26,6 +26,9 @@ export type Membership = {
   can_stage_complaints: boolean;
   can_file_complaints: boolean;
   can_view_claims: boolean;
+  can_stage_objections: boolean;
+  can_sign_objections: boolean;
+  can_add_evidence: boolean;
 };
 export type Session = {
   user: { id: string; username: string; name: string };
@@ -182,6 +185,11 @@ export type Claim = {
   cycle_code: string;
   submission_id: string;
   submitted_at: string;
+  objection_case_id: string | null;
+  objection_revision_id: string | null;
+  objection_version: number;
+  objection_state: "none" | "open" | "withdrawn";
+  disputed_amount: string;
 };
 export type ClaimSummary = {
   count: number;
@@ -189,4 +197,9 @@ export type ClaimSummary = {
   currency: string;
   basis: "reported_only";
   is_demo: boolean;
+  disputed_amount_total: string;
+  active_objection_count: number;
+  accepted_credit_total: string | null;
+  verified_settlement_total: string | null;
+  remaining_reportable_balance: string | null;
 };

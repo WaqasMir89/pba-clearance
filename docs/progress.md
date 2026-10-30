@@ -114,3 +114,23 @@ Executed verification:
 - Ruff lint/format, diff checks and the existing TypeScript/production build passed. Connected S05 browser acceptance is the next commit.
 
 This is a sandbox with plain-text evidence statements and unverified supplied references. Original-document storage, malware/retention controls, policy-authority decisions, MFA, financial attestation, dispute decisions/appeals and operational acceptance remain open gates.
+
+S05a remote CI [41079939434](https://github.com/WaqasMir89/pba-clearance/actions/runs/41079939434) passed both jobs on exact commit `996fe4c3c387128dd2bbb79ff7f8efcd09a649a6`.
+
+## S05b — Connected objections, evidence and grouped reports
+
+Implemented agency-private draft preparation/review, approver signing, amendment, withdrawal and reopening from the reported claim. Added a submitted-case register, private draft register, signed revision history, verified JSON receipt downloads, late evidence statements and exact channel/client/cycle report views. Financial figures remain explicitly unknown; reported amounts are never reduced by a dispute.
+
+Pending response commands save their complete payload before a write, scoped by user, workspace, action and source. A register panel opens the saved source after reload. Recovery checks protected records before an explicit retry and preserves the original UUID/payload. Rejected forms retain their entered text and declaration/time values for correction. No original file or URL is retrieved.
+
+Executed local Chromium verification against PostgreSQL and the production browser bundle:
+
+- Agency preparer staged a private partial objection for North invoice 101; signing was absent from that role. The agency approver's exact closing-boundary attempt was rejected and retained its entered values. A valid simulation signed version 1 for PKR 240.10. Downloaded canonical JSON independently reproduced SHA-256 `f92e80decdc24bbbfeb2f4ec5733a93836cacf071610bb5b2e33f442f63b80b7`. A modified receipt response was rejected with zero downloads.
+- Amendment, withdrawal, reopening and a late withdrawal retained all five signed versions for invoice 101. A second case for invoice 102 opened at PKR 50.25. The channel read signed history and added a late counterstatement; the agency added its own late statement. Neither changed the reported total.
+- Injected response loss after committed draft, withdrawal and evidence commands; blocked recovery reads and reloaded the tab for draft/evidence. Restored protected reads recovered the original results. A separate signature interruption before commit survived reload; explicit retry sent an identical UUID/payload and created exactly one signed version. Simulated unavailable session storage sent **zero draft commands**.
+- Other-agency case/receipt reads returned 404, with no foreign drafts or evidence listed. The channel could not read an agency-private draft. Read-only PBA auditor oversight saw both submitted cases, all retained history and both participant statements without mutation controls. The policy preparer had no objection navigation.
+- Grouped channel/client/cycle figures matched exact reported and separately disputed totals. Empty search, injected register read failure/retry and over-amount validation passed. Final local state: **four private drafts, two cases, six signed revisions and two evidence statements**. The original four claims still total **PKR 5,310.00** (Studio PKR 4,720.00; Orbit PKR 590.00); only invoice 102 has an active dispute, PKR 50.25. Accepted credits, verified settlement and reportable balance remain unknown.
+- **Nine geometry and targeted WCAG axe checks** passed: reported claims at 360, 390, 768, 1280 and 1440 pixels; case register and claim/evidence detail at 360 and 1440. Modal Tab/Shift+Tab containment, Escape and focus return passed. A final complete axe scan of the receipt/detail surface found zero violations. Mobile/desktop screenshots were visually inspected and remain local. No unhandled JavaScript exceptions occurred during the final role checks.
+- Browser checks found and corrected rejected-input reset and a receipt button's accessible-name mismatch. Grouped pagination resets on changed search filters. TypeScript/production build, Prettier, Ruff and diff checks passed. The unchanged backend passed its **250 PostgreSQL tests** and both CI jobs on S05a; this browser commit is also checked by both jobs in [GitHub Actions](https://github.com/WaqasMir89/pba-clearance/actions).
+
+These are fictional sandbox records and injected faults, not production authority, policy, original-document, financial, provider, device or operational acceptance. S06 verified settlement and physical custody is the next delivery step. Production effects remain disabled.
