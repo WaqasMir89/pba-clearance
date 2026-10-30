@@ -16,7 +16,7 @@ Every workspace endpoint requires `X-Organization-ID`. The server re-reads a cur
 | Channel preparer/approver | Own organization; explicit client visibility | No | No | No | No |
 | Agency preparer/approver | Own organization; explicit client visibility | No | No | No | No |
 
-Approver role names reserve future capabilities; this delivery provides no financial, notice, enforcement or appointment approval commands. MFA and production provisioning/recovery are still required before privileged production use.
+Channel approvers may file sandbox complaint imports only in development with fictional identities and a candidate calendar. Other approval capabilities remain future work. This delivery provides no financial, notice, enforcement or appointment approval commands. MFA and production provisioning/recovery are still required before privileged production use.
 
 ## Endpoints
 
@@ -37,10 +37,30 @@ Approver role names reserve future capabilities; this delivery provides no finan
 | `GET /cycles/` | Sealed candidates for PBA policy readers; fictional candidates for demo organizations; empty for ordinary member organizations until an approved/publication workflow exists |
 | `POST /cycles/` | Policy preparer records a candidate broadcast period and explicit milestone cutoffs atomically |
 | `GET /audit/` | Append-only workspace actions, actor and request reference |
+| `GET /complaint-intake/options/` | Channel-only demo clients/agencies, CSV limits and declaration; up to 100 clients, optional code/name `q`, explicit `client_count`/`client_limit` |
+| `GET /complaint-import-template/` | Authenticated constant CSV headers, without workspace business data |
+| `GET /complaint-imports/` | Channel-only staged imports; optional `cycle_id` and `idempotency_key` |
+| `POST /complaint-imports/` | Stage bounded base64-encoded CSV, preserve original bytes/hash and return row review |
+| `GET /complaint-imports/{uuid}/` | Revalidated preview, or archived filing-time review after submission |
+| `POST /complaint-imports/{uuid}/submit/` | Sandbox channel approver files all ready rows against expected preview digest |
+| `GET /complaint-submissions/{uuid}/` | Immutable submitted receipt for originating channel/PBA registry or auditor |
+| `GET /complaint-submissions/{uuid}/receipt/` | Exact canonical JSON download; SHA-256 matches receipt content hash |
+| `GET /claims/`, `GET /claims/{uuid}/` | Filed reports scoped by originating channel or affected agency; PBA oversight allowed |
+| `GET /claims/summary/` | Exact decimal sum of visible reported amounts, explicitly unverified; `cycle_id`/invoice-number `q` match the list |
 
 Lists use `{count, next, previous, results}` with 50 rows by default and a maximum requested page size of 100. Reads are private and noncacheable. `X-Request-ID` is a validated UUID or a new server-generated UUID.
 
 Errors use `{error: {code, message, fields}, request_id}`. Validation fields are retained for correction. Anonymous sessions return 401, forbidden workspaces/roles 403, and scoped missing objects 404. JSON is the supported command format; unsupported formats are rejected. Login has a development-only process-local throttle, not a distributed production abuse-control guarantee.
+
+## Sandbox intake commands
+
+See the [CSV contract and failure rules](plans/complaint-intake.md). Source limits are 256 KiB and 500 records; requests are capped at 1 MiB. Staging takes `cycle_id`, `source_filename`, `csv_base64` and a UUID `idempotency_key`. Invalid file structure fails the command; valid structure preserves individual rows with `ready`, `invalid`, `review` or `duplicate` feedback. Only ready rows enter a filing. No empty receipt is allowed.
+
+Filing takes `expected_preview_hash`, `simulation_at` (ISO timestamp with explicit offset), `declaration_version`, `declaration_accepted` and a new UUID `idempotency_key`. The candidate opening is inclusive and closing exclusive in this sandbox. Live authorization uses the actual server clock. `submitted_at` is never the simulation clock.
+
+Both commands bind the key to the exact payload in the selected channel. Matching retries return the original result with `replayed: true`; different payloads return 409. A changed review returns `stale_preview` (409). A different command on an already filed import returns `already_filed` (409). Reconcile an uncertain staging response using the protected list filtered by its key; reconcile filing using the source import's `submission_id`, then fetch the receipt. Retrying a successful filing after the simulated close returns the same receipt, subject to current authority.
+
+Amounts are decimal strings, never JSON numbers for browser arithmetic. `reported_due` and aggregate totals describe unverified channel reports. Full staged reviews and excluded source rows remain channel-only. Agency readers receive only their own filed claims, without the multi-agency source file or full receipt. Revocation is checked on every read and replay. Sealed imports, rows, filings, invoices and claims have database mutation/late-append guards; source-byte hashes and filing counts/totals are checked before sealing. Database administrator resistance and production private storage remain separate gates.
 
 ## Data and authority boundaries
 

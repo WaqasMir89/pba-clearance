@@ -51,3 +51,10 @@ def workspace(db):
         foreign_client=foreign_client,
         http=http,
     )
+
+
+@pytest.fixture
+def intake(workspace):
+    from tests.complaints_helpers import prepare_intake
+
+    return prepare_intake(workspace)

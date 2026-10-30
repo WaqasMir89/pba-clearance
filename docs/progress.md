@@ -64,3 +64,17 @@ Executed verification:
 The browser used the built bundle behind a loopback-only temporary Nginx preview because this managed sandbox does not allow an ordinary host Vite listener. The documented Vite proxy configuration is supplied for normal local development. CI now checks both the PostgreSQL backend and a clean Node 24 frontend install/build. Exact per-commit results are available in [GitHub Actions](https://github.com/WaqasMir89/pba-clearance/actions).
 
 Current limits: cycle/participant pickers expose up to 100 records, browser calendar creation is not yet included (the candidate API exists), and all production financial/enforcement/provider/MFA/retention/migration/shadow-operation gates remain open. S04–S12 are not complete. The next delivery is validated complaint intake and immutable submission receipts, first in a clearly labeled sandbox while production rule approval is pending.
+
+## S04a — Sandbox complaint intake API
+
+Implemented the [intake contract](plans/complaint-intake.md): bounded UTF-8 CSV staging with preserved source bytes/digest, per-row feedback, exact decimal arithmetic, duplicate/collision review and corrected re-upload. Only a live fictional channel approver may file ready rows. Filing freezes a declaration, actual server time, explicit simulation time, source/candidate provenance and a canonical content-hashed JSON receipt. No reported amount establishes liability, payment or verified outstanding balance.
+
+Staging and filing have payload-bound idempotency keys and protected recovery reads. Stale previews fail before posting. Channel locks and database uniqueness prevent competing requests from double-reporting an invoice. Agency reads include only that agency's filed claims; source reviews and full multi-agency receipts remain private to the channel, with explicit PBA oversight of submitted records. Database guards reject history mutation, late appends, mismatched source hashes and inconsistent filing counts/totals. Business writes, audit and outbox commit atomically.
+
+Executed verification on PostgreSQL 18.6 using the non-superuser/non-BYPASSRLS application connection:
+
+- **154 tests passed**, including malformed/oversized files, monetary precision, partial imports, corrected uploads, access/revocation, simulation-window boundaries, stale previews, replay/payload conflicts, rollback, raw SQL mutation/append rejection and three simultaneous-request scenarios with separate database connections.
+- Migrations applied; no migration drift; Django checks, warning-free validated OpenAPI and Ruff lint/format passed.
+- Existing TypeScript/production browser build passed. The new intake browser workflow is the next commit; no browser acceptance is claimed here.
+
+The first full run encountered a stopped development database; restarting the existing dedicated Compose service restored verification without resetting its volume. The final suite above passed. Demo provisioning now adds a separate `demo.approver` while preserving existing passwords and revocations. Production filing, MFA, approved policy/period rules, original-document storage and retention remain open gates. XLSX and amendments to filed claims are later slices.

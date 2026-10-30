@@ -8,7 +8,7 @@ See [BUILD_PLAN.md](BUILD_PLAN.md) for the sequence, [discovery register](docs/d
 
 ## Current scope
 
-The first delivery includes named sessions, scoped organization/client registers, audit history, candidate policy/calendar snapshots and a connected React workspace. All seeded examples are fictional. Production enforcement and outbound communications remain disabled. Complaint intake is the next delivery step.
+The delivery includes named sessions, scoped organization/client registers, audit history, candidate policy/calendar snapshots and a connected React workspace. Sandbox complaint intake now supports strict CSV staging, row feedback, duplicate detection, approver filing and immutable receipts through the API; its browser workflow is being connected next. Agencies can read only their own filed reported claims. All seeded examples are fictional. Production filing, enforcement and outbound communications remain disabled.
 
 ## Development
 
@@ -33,7 +33,7 @@ uv run pytest
 
 Liveness: `/health/live/`. Database readiness: `/health/ready/`. API schema: `/api/v1/schema/` (authenticated). Business responses are private and noncacheable. The foundation records outbox intents but does not dispatch email or any other external effect.
 
-Provision fictional local records with `uv run python manage.py seed_demo`. In an interactive terminal it prompts for a password; automation can supply `CLEARANCE_DEMO_PASSWORD`. There is no preset password. Demo users are `demo.pba` (registry officer), `demo.channel` (two channel workspaces), `demo.agency` (two agency workspaces), `demo.reviewer` (read-only PBA auditor) and `demo.policy` (candidate policy preparation only). Re-running preserves passwords, revocations and existing records. Demo provisioning is disabled outside development.
+Provision fictional local records with `uv run python manage.py seed_demo`. In an interactive terminal it prompts for a password; automation can supply `CLEARANCE_DEMO_PASSWORD`. There is no preset password. Demo users are `demo.pba` (registry officer), `demo.channel` (two channel workspaces), `demo.approver` (sandbox filing for those channels), `demo.agency` (two agency workspaces), `demo.reviewer` (read-only PBA auditor) and `demo.policy` (candidate policy preparation only). Re-running preserves passwords, revocations and existing records. Demo provisioning is disabled outside development.
 
 In a second terminal:
 
@@ -46,6 +46,8 @@ npm run dev
 Open http://127.0.0.1:5196. Vite proxies the same-origin API to Django on 8046; no cross-origin authentication setup is needed. `npm run build` checks TypeScript and builds the browser bundle; `npm run format:check` checks formatting. Development uses Node 22.12+; CI verifies Node 24. The current cycle/participant pickers expose up to 100 records; complete archive selection and production-scale workflows are later slices. Calendar creation is available through the API; the current browser calendar is read-only.
 
 The candidate source text is in `examples/candidate-policy.txt`; its SHA-256 is reproducible. Explicit dates/times in demo data are fictional examples, not an implementation of the supplied workflow's disputed dates. Policy version and sealed calendar history are protected against application UPDATE/DELETE; milestones cannot be appended after sealing. There is no production policy approval endpoint.
+
+The [intake contract](docs/plans/complaint-intake.md) describes CSV fields, limits, exact decimal amounts, review outcomes and response-loss recovery. Sandbox filing requires an explicit simulation timestamp inside the selected candidate window; it also records the real server time. A filed reported amount is an unverified channel assertion, not a settlement or an established outstanding balance. Corrections use new imports; sealed history cannot be edited or extended. Production policy, evidence storage and MFA remain release gates.
 
 Authentication flow: `GET /api/v1/auth/csrf/`, then JSON `POST /api/v1/auth/login/` with `X-CSRFToken`; use `/auth/session/` for current memberships. Login rotates the CSRF token. Refresh it before subsequent JSON commands. Workspace requests require `X-Organization-ID` for a live membership. JSON `POST /auth/logout/` also requires CSRF. Only an explicitly authorized PBA registry officer can create organization/client entries, and writes are currently disabled outside development. Client visibility grants do not establish approved agency appointments or business eligibility.
 

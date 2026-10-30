@@ -306,7 +306,7 @@ def test_demo_is_explicit_idempotent_and_preserves_revocation(monkeypatch):
         membership = Membership.objects.filter(user__username="demo.channel").first()
         Membership.objects.filter(pk=membership.pk).update(revoked_at=timezone.now())
         call_command("seed_demo")
-    assert User.objects.filter(is_demo=True).count() == 5
+    assert User.objects.filter(is_demo=True).count() == 6
     assert Organization.objects.filter(is_demo=True).count() == 5
     assert Client.objects.filter(is_demo=True).count() == 3
     assert AuditEvent.objects.count() == count

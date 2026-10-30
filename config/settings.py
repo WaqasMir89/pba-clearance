@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "apps.audit",
     "apps.registry",
     "apps.policy",
+    "apps.complaints",
 ]
 MIDDLEWARE = [
     "apps.common.middleware.RequestIdMiddleware",

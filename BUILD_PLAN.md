@@ -2,7 +2,7 @@
 
 Prepared 30 October 2026. Implementation is authorized; delivery proceeds through verified commits on `main`. The original supplied engineering plan remains the overall scope reference. This document translates it into executable delivery steps without publishing private discovery/commercial files.
 
-Current delivery: S00–S03 implemented with local verification; see `docs/progress.md` and per-commit GitHub Actions for evidence. S04–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
+Current delivery: S00–S03 implemented with local verification; S04 sandbox intake API implemented with browser work in progress. See `docs/progress.md` and per-commit GitHub Actions for evidence. The rest of S04 and S05–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
 
 ## Evidence and decisions
 
@@ -107,6 +107,8 @@ Failure/recovery: clear organization data on scope changes; discard stale respon
 Verification: typecheck/build, browser login/logout/switch/permission/empty/error flows, 360px and desktop geometry, console errors and focused accessibility checks. Exit: connected UI and candidate configuration tested and pushed; production acceptance remains open.
 
 ### S04 — Channel complaint intake
+
+Detailed delivery contract: [sandbox intake plan](docs/plans/complaint-intake.md). Deliver and verify the API and connected browser as separate commits. Production filing remains disabled until the external dependencies below are resolved.
 
 Outcome: channel stages CSV rows with exact decimals, row-level errors and duplicate candidates, then submits a frozen version with content-hashed receipt. Agency sees only its reported claims.
 

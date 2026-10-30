@@ -32,7 +32,7 @@ class Command(BaseCommand):
             raise CommandError(" ".join(exc.messages)) from exc
 
         users = {}
-        for label in ["pba", "channel", "agency", "reviewer", "policy"]:
+        for label in ["pba", "channel", "agency", "reviewer", "policy", "approver"]:
             user, created = User.objects.get_or_create(
                 username=f"demo.{label}",
                 defaults={"first_name": "Demo", "last_name": label.title(), "is_demo": True},
@@ -82,6 +82,8 @@ class Command(BaseCommand):
             ("agency", "orbit", Membership.Role.AGENCY_PREPARER),
             ("reviewer", "pba", Membership.Role.PBA_AUDITOR),
             ("policy", "pba", Membership.Role.PBA_POLICY_PREPARER),
+            ("approver", "north", Membership.Role.CHANNEL_APPROVER),
+            ("approver", "coast", Membership.Role.CHANNEL_APPROVER),
         ]
         for who, workspace, role in memberships:
             membership, created = Membership.objects.get_or_create(
@@ -125,7 +127,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 "Fictional workspaces ready: demo.pba, demo.channel, demo.agency, "
-                "demo.reviewer, demo.policy. "
+                "demo.reviewer, demo.policy, demo.approver. "
                 "Existing passwords, revocations and records were preserved."
             )
         )

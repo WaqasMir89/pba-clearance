@@ -1,6 +1,7 @@
 from django.db import transaction
+from django.http import Http404
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied
 
 from apps.audit.models import AuditEvent
 from apps.identity.selectors import workspace_membership
@@ -24,7 +25,10 @@ class WorkspaceMixin:
         )
 
     def handle_exception(self, exc):
-        if isinstance(exc, PermissionDenied) and self.request.user.is_authenticated:
+        if (
+            isinstance(exc, (PermissionDenied, NotFound, Http404))
+            and self.request.user.is_authenticated
+        ):
             # Run after a command's transaction unwinds so the denial persists.
             with transaction.atomic():
                 AuditEvent.objects.create(

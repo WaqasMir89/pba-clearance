@@ -1,5 +1,8 @@
 from uuid import UUID, uuid4
 
+from django.conf import settings
+from django.core.exceptions import RequestDataTooBig
+from django.http import JsonResponse
 from django.utils.cache import patch_vary_headers
 
 
@@ -22,7 +25,26 @@ class PrivateResponseMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        response = self.get_response(request)
+        response = None
+        if request.path.startswith("/api/") and request.method in {"POST", "PUT", "PATCH"}:
+            try:
+                # Cache a bounded body before DRF reads its stream directly.
+                if len(request.body) > settings.DATA_UPLOAD_MAX_MEMORY_SIZE:
+                    raise RequestDataTooBig()
+            except RequestDataTooBig:
+                response = JsonResponse(
+                    {
+                        "error": {
+                            "code": "request_too_large",
+                            "message": "The request is too large.",
+                            "fields": {},
+                        },
+                        "request_id": getattr(request, "request_id", None),
+                    },
+                    status=413,
+                )
+        if response is None:
+            response = self.get_response(request)
         if request.path.startswith("/api/"):
             response["Cache-Control"] = "no-store, private"
             patch_vary_headers(response, ["Cookie", "X-Organization-ID"])

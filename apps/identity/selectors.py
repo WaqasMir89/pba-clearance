@@ -70,6 +70,23 @@ def session_payload(user):
                     Membership.Role.PBA_POLICY_PREPARER,
                 },
                 "can_prepare_policy": m.role == Membership.Role.PBA_POLICY_PREPARER,
+                "can_stage_complaints": settings.ENVIRONMENT == "development"
+                and user.is_demo
+                and m.organization.is_demo
+                and m.role in {Membership.Role.CHANNEL_PREPARER, Membership.Role.CHANNEL_APPROVER},
+                "can_file_complaints": settings.ENVIRONMENT == "development"
+                and user.is_demo
+                and m.organization.is_demo
+                and m.role == Membership.Role.CHANNEL_APPROVER,
+                "can_view_claims": m.role
+                in {
+                    Membership.Role.PBA_REGISTRY,
+                    Membership.Role.PBA_AUDITOR,
+                    Membership.Role.CHANNEL_PREPARER,
+                    Membership.Role.CHANNEL_APPROVER,
+                    Membership.Role.AGENCY_PREPARER,
+                    Membership.Role.AGENCY_APPROVER,
+                },
             }
             for m in memberships
         ],
