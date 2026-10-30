@@ -40,4 +40,27 @@ Passed on the same PostgreSQL environment:
 - Warning-free, validated OpenAPI generation; CI now requires it.
 - Migration apply/drift, Django system check and Ruff lint/format passed.
 
-Registry writes and demo provisioning are disabled outside development. MFA, production account recovery/delegation administration, shared rate limiting and production authority acceptance remain open. No public admin or membership-management bypass is exposed. S03–S12 are not complete.
+Registry writes and demo provisioning are disabled outside development. MFA, production account recovery/delegation administration, shared rate limiting and production authority acceptance remain open. No public admin or membership-management bypass is exposed.
+
+S02 remote CI [41033787489](https://github.com/WaqasMir89/pba-clearance/actions/runs/41033787489) passed on exact commit `1eaa9fb2cc9ff766e66e1c9e83ad76280fc0eb1e`.
+
+## S03 — Connected workspace and candidate configuration
+
+Implemented a real React/TypeScript workspace for session login, organization switching, scoped organization/client lists, name search, registry creation, candidate policy preparation, read-only calendars and activity history. Added loading, empty, permission/error, retry and success states. Scope changes clear prior records and ignore stale requests. Sessions refresh when the window regains focus. No balances or operational results are fabricated.
+
+Added a separate policy-preparer role, immutable source/version records, explicit local/UTC calendar milestones and atomic cycle sealing. Database guards prevent snapshot UPDATE/DELETE, adding milestones after sealing, inconsistent local/UTC instants and promoting a candidate to an approved state. New versions preserve historical references. All candidate/registry mutations are still restricted to development.
+
+Executed verification:
+
+- **57 PostgreSQL tests passed** on the non-superuser/non-BYPASSRLS application connection, including invalid policy intervals, immutable snapshots, sealed-cycle append rejection, exact cutoff conversion, historical version preservation, scope isolation and explicit fictional labels.
+- Migration application/drift, Django system checks, warning-free OpenAPI validation and Ruff lint/format passed.
+- TypeScript check, production browser build and Prettier check passed. npm audit found no vulnerabilities at verification time; this is not independent application security acceptance.
+- Real Chromium journeys passed: sign-in/out and relogin across all five demo personas; organization and client creation; invalid reference rejection; empty search/recovery; simulated read failure/retry; channel/agency isolation and workspace switching; read-only auditor; policy-preparer separation; candidate creation; and preservation of the original cycle policy.
+- Keyboard checks passed for login order, modal focus containment, Escape dismissal and return to the triggering button. Browser checks found and corrected contrast/landmark issues, a modern HTML pattern escape and modal focus return. No unhandled JavaScript exceptions occurred during the final role journeys.
+- Final axe scans: **zero detected violations on six main screens**, the registry/policy dialogs and desktop/mobile login. This is automated local evidence, not a WCAG certification or real-device audit.
+- **15 geometry checks** passed across overview/calendar/policy at 360, 390, 768, 1280 and 1440 pixels without page overflow. Login also passed at 360 and 1440. Desktop/mobile screenshots were visually inspected and remain in ignored local browser output.
+- A local `pg_dump`/`pg_restore` exercise under `clearance_app` matched the checkpoint's six organizations, four clients, one policy, one cycle, five milestones and 28 audit/outbox records. The restored audit trigger rejected a raw SQL UPDATE. The temporary restore database and dump were removed. This does not establish production PITR, storage recovery or the four-hour recovery target.
+
+The browser used the built bundle behind a loopback-only temporary Nginx preview because this managed sandbox does not allow an ordinary host Vite listener. The documented Vite proxy configuration is supplied for normal local development. CI now checks both the PostgreSQL backend and a clean Node 24 frontend install/build. Exact per-commit results are available in [GitHub Actions](https://github.com/WaqasMir89/pba-clearance/actions).
+
+Current limits: cycle/participant pickers expose up to 100 records, browser calendar creation is not yet included (the candidate API exists), and all production financial/enforcement/provider/MFA/retention/migration/shadow-operation gates remain open. S04–S12 are not complete. The next delivery is validated complaint intake and immutable submission receipts, first in a clearly labeled sandbox while production rule approval is pending.

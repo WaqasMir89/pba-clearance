@@ -205,6 +205,25 @@ def test_client_creation_grants_visibility_without_creating_appointment(workspac
     assert scoped_get(workspace, f"/api/v1/registry/clients/{client.id}/").status_code == 200
 
 
+def test_demo_workspace_cannot_create_unlabelled_registry_examples(workspace):
+    Organization.objects.filter(pk=workspace.pba.pk).update(is_demo=True)
+    organization = create_organization(
+        actor=workspace.officer,
+        organization_id=workspace.pba.id,
+        legal_name="Fictional Added Agency",
+        code="fictional-added",
+        kind="agency",
+    )
+    client = create_client(
+        actor=workspace.officer,
+        organization_id=workspace.pba.id,
+        legal_name="Fictional Added Client",
+        code="fictional-added-client",
+        participant_ids=[organization.pk],
+    )
+    assert organization.is_demo and client.is_demo
+
+
 def test_invalid_participant_rolls_back_creation(workspace):
     with pytest.raises(ApiValidationError, match="existing, active"):
         create_client(
@@ -287,7 +306,7 @@ def test_demo_is_explicit_idempotent_and_preserves_revocation(monkeypatch):
         membership = Membership.objects.filter(user__username="demo.channel").first()
         Membership.objects.filter(pk=membership.pk).update(revoked_at=timezone.now())
         call_command("seed_demo")
-    assert User.objects.filter(is_demo=True).count() == 4
+    assert User.objects.filter(is_demo=True).count() == 5
     assert Organization.objects.filter(is_demo=True).count() == 5
     assert Client.objects.filter(is_demo=True).count() == 3
     assert AuditEvent.objects.count() == count

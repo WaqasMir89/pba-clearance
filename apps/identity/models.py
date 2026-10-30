@@ -15,6 +15,7 @@ class Membership(models.Model):
     class Role(models.TextChoices):
         PBA_REGISTRY = "pba_registry", "Registry officer"
         PBA_AUDITOR = "pba_auditor", "PBA auditor"
+        PBA_POLICY_PREPARER = "pba_policy_preparer", "Policy preparer"
         CHANNEL_PREPARER = "channel_preparer", "Channel preparer"
         CHANNEL_APPROVER = "channel_approver", "Channel approver"
         AGENCY_PREPARER = "agency_preparer", "Agency preparer"
@@ -42,6 +43,7 @@ class Membership(models.Model):
                     role__in=[
                         "pba_registry",
                         "pba_auditor",
+                        "pba_policy_preparer",
                         "channel_preparer",
                         "channel_approver",
                         "agency_preparer",

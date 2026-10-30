@@ -32,7 +32,7 @@ class Command(BaseCommand):
             raise CommandError(" ".join(exc.messages)) from exc
 
         users = {}
-        for label in ["pba", "channel", "agency", "reviewer"]:
+        for label in ["pba", "channel", "agency", "reviewer", "policy"]:
             user, created = User.objects.get_or_create(
                 username=f"demo.{label}",
                 defaults={"first_name": "Demo", "last_name": label.title(), "is_demo": True},
@@ -81,6 +81,7 @@ class Command(BaseCommand):
             ("agency", "studio", Membership.Role.AGENCY_PREPARER),
             ("agency", "orbit", Membership.Role.AGENCY_PREPARER),
             ("reviewer", "pba", Membership.Role.PBA_AUDITOR),
+            ("policy", "pba", Membership.Role.PBA_POLICY_PREPARER),
         ]
         for who, workspace, role in memberships:
             membership, created = Membership.objects.get_or_create(
@@ -118,9 +119,13 @@ class Command(BaseCommand):
                 participant_ids=[organizations[key].pk for key in participants],
                 is_demo=True,
             )
+        from apps.policy.demo import seed_candidate_configuration
+
+        seed_candidate_configuration(actor=users["policy"], organization_id=organizations["pba"].pk)
         self.stdout.write(
             self.style.SUCCESS(
-                "Fictional workspaces ready: demo.pba, demo.channel, demo.agency, demo.reviewer. "
+                "Fictional workspaces ready: demo.pba, demo.channel, demo.agency, "
+                "demo.reviewer, demo.policy. "
                 "Existing passwords, revocations and records were preserved."
             )
         )

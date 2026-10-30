@@ -1,0 +1,5 @@
+Fictional candidate configuration v1
+This text is for development examples only. It is not PBA policy.
+Example dates and local cutoff times are supplied explicitly for UI testing.
+There is no approved settlement, notice, fee, suspension or restoration rule.
+This candidate cannot authorize enforcement or establish business eligibility.

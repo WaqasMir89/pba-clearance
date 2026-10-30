@@ -21,12 +21,12 @@ def require_registry_officer(actor, organization_id):
 def create_organization(
     *, actor, organization_id, legal_name, code, kind, request_id=None, is_demo=False
 ):
-    require_registry_officer(actor, organization_id)
+    membership = require_registry_officer(actor, organization_id)
     record = Organization(
         legal_name=legal_name.strip(),
         code=code.strip().lower(),
         kind=kind,
-        is_demo=is_demo,
+        is_demo=is_demo or membership.organization.is_demo,
         created_by=actor,
     )
     record.full_clean()
@@ -50,7 +50,7 @@ def create_organization(
 def create_client(
     *, actor, organization_id, legal_name, code, participant_ids, request_id=None, is_demo=False
 ):
-    require_registry_officer(actor, organization_id)
+    membership = require_registry_officer(actor, organization_id)
     participants = list(Organization.objects.filter(pk__in=participant_ids, is_active=True))
     if not participants or len(participants) != len(set(participant_ids)):
         raise ValidationError(
@@ -59,7 +59,10 @@ def create_client(
     if any(p.kind == Organization.Kind.PBA for p in participants):
         raise ValidationError({"participant_ids": "Choose channel or agency workspaces."})
     record = Client(
-        legal_name=legal_name.strip(), code=code.strip().lower(), created_by=actor, is_demo=is_demo
+        legal_name=legal_name.strip(),
+        code=code.strip().lower(),
+        created_by=actor,
+        is_demo=is_demo or membership.organization.is_demo,
     )
     record.full_clean()
     try:

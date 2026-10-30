@@ -63,6 +63,13 @@ def session_payload(user):
                 "can_manage_registry": m.role == Membership.Role.PBA_REGISTRY,
                 "can_view_audit": m.role
                 in {Membership.Role.PBA_REGISTRY, Membership.Role.PBA_AUDITOR},
+                "can_view_policy": m.role
+                in {
+                    Membership.Role.PBA_REGISTRY,
+                    Membership.Role.PBA_AUDITOR,
+                    Membership.Role.PBA_POLICY_PREPARER,
+                },
+                "can_prepare_policy": m.role == Membership.Role.PBA_POLICY_PREPARER,
             }
             for m in memberships
         ],

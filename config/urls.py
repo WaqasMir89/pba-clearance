@@ -4,6 +4,7 @@ from drf_spectacular.views import SpectacularJSONAPIView
 from apps.audit.views import AuditListView
 from apps.common.views import live, ready
 from apps.identity.views import CsrfView, LoginView, LogoutView, SessionView
+from apps.policy.views import CycleListView, PolicyListView
 from apps.registry.views import (
     ClientDetailView,
     ClientListView,
@@ -24,4 +25,6 @@ urlpatterns = [
     path("api/v1/registry/clients/", ClientListView.as_view()),
     path("api/v1/registry/clients/<uuid:pk>/", ClientDetailView.as_view()),
     path("api/v1/audit/", AuditListView.as_view()),
+    path("api/v1/policies/", PolicyListView.as_view()),
+    path("api/v1/cycles/", CycleListView.as_view()),
 ]
