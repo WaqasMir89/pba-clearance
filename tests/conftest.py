@@ -58,3 +58,10 @@ def intake(workspace):
     from tests.complaints_helpers import prepare_intake
 
     return prepare_intake(workspace)
+
+
+@pytest.fixture
+def disputes(intake):
+    from tests.disputes_helpers import prepare_disputes
+
+    return prepare_disputes(intake)

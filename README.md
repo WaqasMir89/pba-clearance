@@ -10,6 +10,8 @@ See [BUILD_PLAN.md](BUILD_PLAN.md) for the sequence, [discovery register](docs/d
 
 The delivery includes named sessions, scoped organization/client registers, audit history, candidate policy/calendar snapshots and a connected React workspace. Sandbox complaint intake supports CSV upload/review, duplicate detection, approver filing, recoverable commands and verified receipt downloads. Agencies can read only their own filed reported claims. All seeded examples are fictional. Production filing, enforcement and outbound communications remain disabled.
 
+The S05 API adds private agency objection drafts, approver-signed versions, withdrawal/reopening, supplementary evidence statements and scoped grouped reports. Its connected browser workflow is being built next. Objections and evidence statements have no payment, clearance or enforcement effect; financial-ledger figures remain unknown.
+
 ## Development
 
 Requires Python 3.13, uv, Docker/Compose and Node 22.12+. The foundation uses Django 5.2 LTS, DRF and PostgreSQL 18; exact dependencies are in `uv.lock`.
@@ -33,7 +35,7 @@ uv run pytest
 
 Liveness: `/health/live/`. Database readiness: `/health/ready/`. API schema: `/api/v1/schema/` (authenticated). Business responses are private and noncacheable. The foundation records outbox intents but does not dispatch email or any other external effect.
 
-Provision fictional local records with `uv run python manage.py seed_demo`. In an interactive terminal it prompts for a password; automation can supply `CLEARANCE_DEMO_PASSWORD`. There is no preset password. Demo users are `demo.pba` (registry officer), `demo.channel` (two channel workspaces), `demo.approver` (sandbox filing for those channels), `demo.agency` (two agency workspaces), `demo.reviewer` (read-only PBA auditor) and `demo.policy` (candidate policy preparation only). Re-running preserves passwords, revocations and existing records. Demo provisioning is disabled outside development.
+Provision fictional local records with `uv run python manage.py seed_demo`. In an interactive terminal it prompts for a password; automation can supply `CLEARANCE_DEMO_PASSWORD`. There is no preset password. Demo users are `demo.pba` (registry officer), `demo.channel` (two channel workspaces), `demo.approver` (sandbox filing for those channels), `demo.agency` (two agency workspaces), `demo.agencyapprover` (sandbox agency signing), `demo.reviewer` (read-only PBA auditor) and `demo.policy` (candidate policy preparation only). Re-running preserves passwords, revocations and existing records. Demo provisioning is disabled outside development.
 
 In a second terminal:
 
@@ -50,6 +52,8 @@ The candidate source text is in `examples/candidate-policy.txt`; its SHA-256 is 
 The [intake contract](docs/plans/complaint-intake.md) describes CSV fields, limits, exact decimal amounts, review outcomes and response-loss recovery. Sandbox filing requires an explicit simulation timestamp inside the selected candidate window; it also records the real server time. A filed reported amount is an unverified channel assertion, not a settlement or an established outstanding balance. Corrections use new imports; sealed history cannot be edited or extended. Production policy, evidence storage and MFA remain release gates.
 
 Follow the [fictional CSV walkthrough](examples/intake/README.md) to exercise mixed-row review, corrected upload and separate agency visibility. The browser saves pending command metadata in session storage, checks protected records after a lost response and retains the original UUID/payload for an explicit retry. Source file bytes stay in memory; after reloading an unresolved upload, reselect the unchanged CSV. Closing the tab may remove this local recovery metadata; server records and idempotency remain authoritative.
+
+The [agency-response contract](docs/plans/agency-disputes.md) defines draft privacy, signed versions and late evidence. `examples/candidate-response-window.txt` supplies explicit fictional response instants independently of the sealed complaint calendar. Evidence is currently a bounded plain-text statement with an unverified reference; original-document storage and policy decisions remain release gates.
 
 Authentication flow: `GET /api/v1/auth/csrf/`, then JSON `POST /api/v1/auth/login/` with `X-CSRFToken`; use `/auth/session/` for current memberships. Login rotates the CSRF token. Refresh it before subsequent JSON commands. Workspace requests require `X-Organization-ID` for a live membership. JSON `POST /auth/logout/` also requires CSRF. Only an explicitly authorized PBA registry officer can create organization/client entries, and writes are currently disabled outside development. Client visibility grants do not establish approved agency appointments or business eligibility.
 

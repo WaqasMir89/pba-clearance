@@ -87,6 +87,24 @@ def session_payload(user):
                     Membership.Role.AGENCY_PREPARER,
                     Membership.Role.AGENCY_APPROVER,
                 },
+                "can_stage_objections": settings.ENVIRONMENT == "development"
+                and user.is_demo
+                and m.organization.is_demo
+                and m.role in {Membership.Role.AGENCY_PREPARER, Membership.Role.AGENCY_APPROVER},
+                "can_sign_objections": settings.ENVIRONMENT == "development"
+                and user.is_demo
+                and m.organization.is_demo
+                and m.role == Membership.Role.AGENCY_APPROVER,
+                "can_add_evidence": settings.ENVIRONMENT == "development"
+                and user.is_demo
+                and m.organization.is_demo
+                and m.role
+                in {
+                    Membership.Role.AGENCY_PREPARER,
+                    Membership.Role.AGENCY_APPROVER,
+                    Membership.Role.CHANNEL_PREPARER,
+                    Membership.Role.CHANNEL_APPROVER,
+                },
             }
             for m in memberships
         ],

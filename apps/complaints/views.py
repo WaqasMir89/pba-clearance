@@ -2,7 +2,7 @@ import hashlib
 from decimal import Decimal
 from uuid import UUID
 
-from django.db.models import Q, Sum
+from django.db.models import Count, Q, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiTypes, extend_schema
@@ -34,6 +34,7 @@ from apps.complaints.serializers import (
     SubmissionSerializer,
 )
 from apps.complaints.validation import canonical_json, money
+from apps.disputes.selectors import with_objections
 from apps.registry.models import Client, ClientAccess, Organization
 
 
@@ -158,6 +159,9 @@ def claim_queryset(membership, request):
     queryset = filter_uuid(
         queryset, request, "cycle_id", "invoice__submission__source_import__cycle_id"
     )
+    queryset = filter_uuid(queryset, request, "channel_id", "invoice__channel_id")
+    queryset = filter_uuid(queryset, request, "client_id", "invoice__client_id")
+    queryset = with_objections(queryset)
     query = request.query_params.get("q", "").strip()[:120]
     return queryset.filter(invoice__invoice_number__icontains=query) if query else queryset
 
@@ -187,11 +191,23 @@ class ClaimSummaryView(WorkspaceMixin, APIView):
     @extend_schema(responses=ClaimSummarySerializer)
     def get(self, request):
         queryset = claim_queryset(self.membership, request)
-        total = queryset.aggregate(total=Sum("reported_due"))["total"] or Decimal("0.00")
+        stats = queryset.aggregate(
+            count=Count("pk"),
+            reported=Sum("reported_due"),
+            disputed=Sum("disputed_amount"),
+            active=Count("pk", filter=Q(objection_state="open")),
+        )
         return Response(
             {
-                "count": queryset.count(),
-                "reported_due_total": money(total),
+                "count": stats["count"],
+                "reported_due_total": money(stats["reported"] or Decimal("0.00")),
+                "disputed_amount_total": money(stats["disputed"] or Decimal("0.00")),
+                "active_objection_count": stats["active"],
+                "accepted_credit_total": None,
+                "verified_settlement_total": None,
+                "remaining_reportable_balance": None,
+                "financial_effect": "none",
+                "enforcement_effect": "none",
                 "currency": "PKR",
                 "basis": "reported_only",
                 "is_demo": True,

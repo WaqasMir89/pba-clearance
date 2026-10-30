@@ -2,7 +2,7 @@
 
 Prepared 30 October 2026. Implementation is authorized; delivery proceeds through verified commits on `main`. The original supplied engineering plan remains the overall scope reference. This document translates it into executable delivery steps without publishing private discovery/commercial files.
 
-Current delivery: S00–S03 and S04 sandbox intake/API/browser implemented with verification. See `docs/progress.md` and per-commit GitHub Actions for evidence. S04 production rule/evidence/identity acceptance and S05–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
+Current delivery: S00–S04 sandbox implemented with verification; S05 objection/evidence API implemented and browser work in progress. See `docs/progress.md` and per-commit GitHub Actions for evidence. Production rule/evidence/identity acceptance, the rest of S05 and S06–S12 remain. The source repository is public; no production deployment or PBA acceptance is claimed.
 
 ## Evidence and decisions
 
@@ -119,6 +119,8 @@ Failure/recovery: malformed dates/decimals and mismatching totals do not enter a
 Verification/exit: A01–A03/A08/A22–A23 on PostgreSQL, immutable receipt replay and channel-to-agency browser journey. Push only the verified slice; no settlement is asserted.
 
 ### S05 — Agency response and dispute intake
+
+Detailed contract: [sandbox agency disputes](docs/plans/agency-disputes.md). Deliver and verify the API and connected browser separately. Unsubmitted drafts are agency-private; signed revisions and supplementary statements follow the original claim's parties. Monetary/enforcement effects remain none until approved later workflows exist.
 
 Outcome: scoped agency workspace, invoice-linked objections and late evidence route. Separate claimed, disputed, accepted credits and verified settlement figures.
 

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from drf_spectacular.views import SpectacularJSONAPIView
 
 from apps.audit.views import AuditListView
@@ -25,6 +25,7 @@ from apps.registry.views import (
 )
 
 urlpatterns = [
+    path("api/v1/", include("apps.disputes.urls")),
     path("health/live/", live),
     path("health/ready/", ready),
     path("api/v1/schema/", SpectacularJSONAPIView.as_view(), name="schema"),

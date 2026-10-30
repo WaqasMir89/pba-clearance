@@ -99,3 +99,18 @@ Executed local Chromium verification against PostgreSQL and the built browser bu
 - Browser checks found and fixed an off-screen table label that expanded mobile page width, transient cycle selection loss during refresh, and focus leaving a single-button modal. TypeScript/production build, Prettier and Ruff/diff checks passed. The UI commit is checked by both jobs in [GitHub Actions](https://github.com/WaqasMir89/pba-clearance/actions).
 
 This is sandbox evidence using invented data and injected browser/network faults. It does not approve PBA rules, production identities, legal declarations, providers, evidence storage, device/cross-browser behavior or production operation. S05 dispute intake is the next delivery step; production filing and all later financial/enforcement effects remain disabled.
+
+## S05a — Agency objection and supplementary-evidence API
+
+Implemented agency-private immutable drafts, agency-approver signing, consecutive raised/amended/withdrawn/reopened history, source-linked canonical receipts, and participant-scoped supplementary evidence statements. A separately sourced fictional response window preserves the existing sealed cycle and complaint receipts. Ordinary signing is window/chronology/version checked; evidence statements and signed withdrawals remain available after ordinary closing. All effects on payment, reported due, clearance and enforcement remain none.
+
+Added scoped current-objection annotations, exact separately disputed totals and paginated channel/client/cycle breakdowns. Unimplemented credits, verified settlement and reportable balance are null. Demo provisioning adds `demo.agencyapprover` without changing existing credentials/revocations.
+
+Executed verification:
+
+- **250 PostgreSQL tests passed** under the non-superuser/non-BYPASSRLS application role: the 154-test baseline plus 96 new checks. Coverage includes private draft/party scope, declarations, precision, partial disputes, explicit window/chronology boundaries, late/missing-window evidence, amendments/withdrawal/reopening, key recovery/conflicts, stale previews, rollback and raw SQL history/illegal revision rejection.
+- Five simultaneous-request tests used separate PostgreSQL connections for draft, signature, competing initial submissions, withdrawal/amendment and evidence replay. Each preserved one command result or one next case version.
+- Fresh test-database migration exposed missing prerequisite ordering for the new SQL helpers. Dependency metadata was corrected before publication; SQL operations and existing development records were preserved. Fresh migration, drift/system checks and warning-free validated OpenAPI passed.
+- Ruff lint/format, diff checks and the existing TypeScript/production build passed. Connected S05 browser acceptance is the next commit.
+
+This is a sandbox with plain-text evidence statements and unverified supplied references. Original-document storage, malware/retention controls, policy-authority decisions, MFA, financial attestation, dispute decisions/appeals and operational acceptance remain open gates.

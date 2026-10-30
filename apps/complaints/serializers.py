@@ -139,6 +139,11 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 
 class ClaimSerializer(serializers.ModelSerializer):
+    objection_case_id = serializers.UUIDField(read_only=True, allow_null=True)
+    objection_revision_id = serializers.UUIDField(read_only=True, allow_null=True)
+    objection_version = serializers.IntegerField(read_only=True)
+    objection_state = serializers.CharField(read_only=True)
+    disputed_amount = serializers.DecimalField(max_digits=18, decimal_places=2, read_only=True)
     invoice_id = serializers.UUIDField(read_only=True)
     invoice_number = serializers.CharField(source="invoice.invoice_number", read_only=True)
     invoice_date = serializers.DateField(source="invoice.invoice_date", read_only=True)
@@ -194,10 +199,22 @@ class ClaimSerializer(serializers.ModelSerializer):
             "cycle_code",
             "submission_id",
             "submitted_at",
+            "objection_case_id",
+            "objection_revision_id",
+            "objection_version",
+            "objection_state",
+            "disputed_amount",
         ]
 
 
 class ClaimSummarySerializer(serializers.Serializer):
+    disputed_amount_total = serializers.CharField()
+    active_objection_count = serializers.IntegerField()
+    accepted_credit_total = serializers.CharField(allow_null=True)
+    verified_settlement_total = serializers.CharField(allow_null=True)
+    remaining_reportable_balance = serializers.CharField(allow_null=True)
+    financial_effect = serializers.CharField()
+    enforcement_effect = serializers.CharField()
     count = serializers.IntegerField()
     reported_due_total = serializers.CharField()
     currency = serializers.CharField()

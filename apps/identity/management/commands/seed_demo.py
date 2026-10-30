@@ -32,7 +32,15 @@ class Command(BaseCommand):
             raise CommandError(" ".join(exc.messages)) from exc
 
         users = {}
-        for label in ["pba", "channel", "agency", "reviewer", "policy", "approver"]:
+        for label in [
+            "pba",
+            "channel",
+            "agency",
+            "reviewer",
+            "policy",
+            "approver",
+            "agencyapprover",
+        ]:
             user, created = User.objects.get_or_create(
                 username=f"demo.{label}",
                 defaults={"first_name": "Demo", "last_name": label.title(), "is_demo": True},
@@ -84,6 +92,8 @@ class Command(BaseCommand):
             ("policy", "pba", Membership.Role.PBA_POLICY_PREPARER),
             ("approver", "north", Membership.Role.CHANNEL_APPROVER),
             ("approver", "coast", Membership.Role.CHANNEL_APPROVER),
+            ("agencyapprover", "studio", Membership.Role.AGENCY_APPROVER),
+            ("agencyapprover", "orbit", Membership.Role.AGENCY_APPROVER),
         ]
         for who, workspace, role in memberships:
             membership, created = Membership.objects.get_or_create(
@@ -124,10 +134,13 @@ class Command(BaseCommand):
         from apps.policy.demo import seed_candidate_configuration
 
         seed_candidate_configuration(actor=users["policy"], organization_id=organizations["pba"].pk)
+        from apps.disputes.demo import seed_response_window
+
+        seed_response_window(actor=users["policy"], organization_id=organizations["pba"].pk)
         self.stdout.write(
             self.style.SUCCESS(
                 "Fictional workspaces ready: demo.pba, demo.channel, demo.agency, "
-                "demo.reviewer, demo.policy, demo.approver. "
+                "demo.reviewer, demo.policy, demo.approver, demo.agencyapprover. "
                 "Existing passwords, revocations and records were preserved."
             )
         )

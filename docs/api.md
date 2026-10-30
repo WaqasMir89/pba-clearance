@@ -74,3 +74,31 @@ Amounts are decimal strings, never JSON numbers for browser arithmetic. `reporte
 - Database triggers protect snapshots/audit from ordinary application mutation. Database owners/administrators can alter the database itself; retention-protected exports and separate runtime roles remain production work.
 
 Liveness (`/health/live/`) and PostgreSQL readiness (`/health/ready/`) sit outside the versioned authenticated API. Neither returns credentials, policy content or commercial data.
+
+## Sandbox agency objections and evidence
+
+All writes below are development/demo only, use the actual clock for authority, require a payload-bound UUID command key and commit audit/outbox atomically. See the [S05 contract](plans/agency-disputes.md). No objection or statement changes reported due, pays a claim, establishes clearance or creates an enforcement hold.
+
+| Method/path | Behavior |
+| --- | --- |
+| `GET /dispute-options/` | Supported reason categories, sandbox declarations and explicit effect/statement boundaries |
+| `GET/POST /dispute-windows/` | Immutable sourced candidate response windows; only a demo PBA policy preparer may create one per cycle |
+| `GET/POST /objection-drafts/` | Agency-private staged proposals; optional claim/cycle/key filters |
+| `GET /objection-drafts/{uuid}/` | Original proposal and current preview/version/window checks |
+| `POST /objection-drafts/{uuid}/submit/` | Agency approver signs raised/amended/reopened revision against expected preview |
+| `GET /disputes/`, `GET /disputes/{uuid}/` | Submitted cases scoped to original agency/channel and PBA registry/auditor; optional claim/cycle/invoice `q` |
+| `POST /disputes/{uuid}/withdraw/` | Agency approver signs a reason and expected case version; preserved history, no settlement |
+| `GET /dispute-revisions/` | Submitted revision history; case/claim filters and originating agency's key/command-type recovery |
+| `GET /dispute-revisions/{uuid}/`, `GET /dispute-revisions/{uuid}/receipt/` | Immutable signed revision and exact canonical JSON download/ETag hash |
+| `GET/POST /claim-evidence/`, `GET /claim-evidence/{uuid}/` | Participant statements and supplied references; claim/key recovery; PBA oversight reads only |
+| `GET /claims/breakdown/` | Paginated, scoped totals grouped by `channel`, `client` or `cycle`; `group_by` defaults to channel |
+
+Stage one claim with `expected_case_version`, positive decimal-string `disputed_amount`, `reason_code`, `explanation`, `supporting_statement`, optional `source_reference` and `idempotency_key`. Corrections create new drafts. The amount cannot exceed reported due. Unsubmitted drafts never appear in a channel/PBA read.
+
+Signing takes the draft's `expected_preview_hash`, explicit-offset `simulation_at`, current `declaration_version`, `declaration_accepted` and `idempotency_key`. Ordinary signing requires the separately sourced window (opening inclusive, closing exclusive). Missing coverage blocks it. Previous simulation chronology is preserved. Signed versions are consecutive; `stale_dispute_version` or `stale_objection_preview` is 409 and requires review/new preparation. A late withdrawal is allowed with its own signed declaration and reason; it does not clear the claim.
+
+Supplementary evidence accepts a bounded 6,000-character `statement`, optional reference, explicit simulation time and evidence declaration/key. It remains available before/after the response window, after withdrawal and without window coverage. Timing is recorded as `before_window`, `within_window`, `late` or `window_unknown`. The actual server timestamp is separate. References are displayed as text; the service does not retrieve a URL or verify an original document.
+
+For uncertain mutations, use protected draft/evidence lists filtered by key, or signed revisions filtered by key and `command_type=submit|withdraw`. Replays preserve the original record under current authority. Same-key payload changes are 409. A draft's `preview.submission_id` also resolves an uncertain signature. Case/claim reads remain available after the window.
+
+Claim details now expose objection case/revision/version/state and separately disputed amount. Summary/grouped responses keep reported and disputed totals separate. `accepted_credit_total`, `verified_settlement_total` and `remaining_reportable_balance` are null because that financial truth is not implemented. Claim list/summary/breakdown accept scoped `channel_id` and `client_id` alongside cycle and invoice search. There is no reported-minus-disputed financial calculation.

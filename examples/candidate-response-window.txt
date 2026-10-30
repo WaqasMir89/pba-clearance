@@ -1,0 +1,14 @@
+FICTIONAL SANDBOX RESPONSE WINDOW - NOT APPROVED PBA POLICY
+
+Candidate cycle: demo-july-2026-v1
+Opening: 2026-10-12 10:00:00 Asia/Karachi (UTC+05:00), inclusive.
+Closing: 2026-10-16 17:00:00 Asia/Karachi (UTC+05:00), exclusive.
+
+These invented instants exercise agency objection submissions in development.
+They are not inferred from a payment cutoff, complaint window, credit period,
+statute, holiday convention or supplied departmental account.
+
+The original sealed cycle and its complaint receipts remain unchanged. Signed
+objections retain this separate window's ID and source hash. Supplementary
+plain-text evidence statements may be recorded outside this window; they have
+no financial or enforcement effect. Production rules require designated owners.
